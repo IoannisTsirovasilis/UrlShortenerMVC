@@ -1,13 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
 using UrlShortenerMVC.Models;
 
 namespace UrlShortenerMVC.ViewModels
 {
     public class UrlViewModel
     {
-        [HiddenInput]
         public string Id { get; set; }
 
         [Required, MaxLength(128, ErrorMessage = "{0} cannot exceed {1} characters.")]
