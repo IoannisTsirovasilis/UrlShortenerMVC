@@ -8,7 +8,10 @@ namespace UrlShortenerMVC.ViewModels
     {
         public string Id { get; set; }
 
-        [Required, MaxLength(128, ErrorMessage = "{0} cannot exceed {1} characters.")]
+        [Required]
+        [MaxLength(128, ErrorMessage = "{0} cannot exceed {1} characters.")]
+        // [RegularExpression(@"^http(s)?://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$", ErrorMessage = "Please enter a valid Url.")]
+        [Display(Name = "Enter Url")]
         public string LongUrl { get; set; }
 
         public string ShortUrl { get; set; }
