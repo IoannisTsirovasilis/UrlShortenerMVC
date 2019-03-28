@@ -1,0 +1,30 @@
+﻿@model UrlShortenerMVC.ViewModels.IndexViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Shorten a URL</h4>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.LongUrl, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.LongUrl, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ShortUrl, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10 ">
+            @Html.DisplayFor(m => m.ShortUrl)
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-primary" value="Register" />
+        </div>
+    </div>
+}
