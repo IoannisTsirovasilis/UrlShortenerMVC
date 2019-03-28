@@ -35,7 +35,7 @@ namespace UrlShortenerMVC.ViewModels
                 Expires = model.Expires,
                 ExpiresAt = model.ExpiresAt,
                 MaxClicks = model.MaxClicks,
-                CurrentClicks = model.MaxClicks,
+                CurrentClicks = model.CurrentClicks,
                 IsActive = model.IsActive
             };
         }
@@ -52,7 +52,7 @@ namespace UrlShortenerMVC.ViewModels
                 Expires = model.Expires,
                 ExpiresAt = model.ExpiresAt,
                 MaxClicks = model.MaxClicks,
-                CurrentClicks = model.MaxClicks,
+                CurrentClicks = model.CurrentClicks,
                 IsActive = model.IsActive
             };
         }
