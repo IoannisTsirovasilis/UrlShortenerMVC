@@ -11,3 +11,11 @@
     background-color: #e68a00;
     border-color: #e68a00;
 }
+
+.text-orange {
+    color: #e68a00;
+}
+
+a.text-orange:hover, a.text-orange:focus {
+    color: #b36b00 !important;
+}
