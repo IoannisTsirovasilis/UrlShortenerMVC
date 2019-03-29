@@ -27,9 +27,15 @@ namespace UrlShortenerMVC.ViewModels
 
         public int Token { get; set; }
         public int Clicks { get; set; }
+
+        [Display(Name = "Max Clicks")]
         public int MaxClicks { get; set; }
         public bool Expires { get; set; }
+
+        [Display(Name = "Expiration Date")]
         public DateTime? ExpiresAt { get; set; }
+
+        [Display(Name ="Is Expired")]
         public bool HasExpired { get; set; }
 
         [Display(Name = "Date Created")]

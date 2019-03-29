@@ -20,7 +20,12 @@ namespace UrlShortenerMVC.Controllers
 
         // GET: Urls
         public ActionResult Index()
-        {       
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = User.Identity.GetUserId();
+                return View(db.Urls.Where(u => u.UserId == userId).ToList().Cast<UrlViewModel>());
+            }
             return View("Error");
         }
 
