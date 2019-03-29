@@ -12,16 +12,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.ClickedAt)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AspNetUser.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IPAddress.IP)
+            @Html.DisplayNameFor(model => model.ClientIPAddress.IPAddress)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Url.LongUrl)
@@ -32,16 +26,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.CreatedAt)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.ClickedAt)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.AspNetUser.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IPAddress.IP)
+            @Html.DisplayFor(modelItem => item.ClientIPAddress.IPAddress)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Url.LongUrl)

@@ -6,7 +6,7 @@ namespace UrlShortenerMVC.ViewModels
     public class ClientIPAddressViewModel
     {
         public string Id { get; set; }
-        public string IP { get; set; }
+        public string IPAddress { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public static implicit operator ClientIPAddress(ClientIPAddressViewModel model)
@@ -14,7 +14,7 @@ namespace UrlShortenerMVC.ViewModels
             return new ClientIPAddress
             {
                 Id = model.Id,
-                IP = model.IP,
+                IPAddress = model.IPAddress,
                 CreatedAt = model.CreatedAt
             };
         }
@@ -24,7 +24,7 @@ namespace UrlShortenerMVC.ViewModels
             return new ClientIPAddressViewModel
             {
                 Id = model.Id,
-                IP = model.IP,
+                IPAddress = model.IPAddress,
                 CreatedAt = model.CreatedAt
             };
         }

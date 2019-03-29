@@ -16,12 +16,9 @@ namespace UrlShortenerMVC.Models
     {
         public string UrlId { get; set; }
         public string IPAddressId { get; set; }
-        public string UserId { get; set; }
-        public Nullable<System.DateTime> CreatedAt { get; set; }
-        public Nullable<System.DateTime> ClickedAt { get; set; }
+        public System.DateTime ClickedAt { get; set; }
     
-        public virtual AspNetUser AspNetUser { get; set; }
-        public virtual Url Url { get; set; }
         public virtual ClientIPAddress ClientIPAddress { get; set; }
+        public virtual Url Url { get; set; }
     }
 }

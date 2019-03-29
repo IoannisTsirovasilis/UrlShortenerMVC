@@ -337,16 +337,16 @@
     <Content Include="Views\Urls\Details.cshtml" />
     <Content Include="Views\Urls\Edit.cshtml" />
     <Content Include="Views\Urls\Index.cshtml" />
-    <Content Include="Views\UrlsIPAddresses\Create.cshtml" />
-    <Content Include="Views\UrlsIPAddresses\Delete.cshtml" />
-    <Content Include="Views\UrlsIPAddresses\Details.cshtml" />
-    <Content Include="Views\UrlsIPAddresses\Edit.cshtml" />
-    <Content Include="Views\UrlsIPAddresses\Index.cshtml" />
     <Content Include="Views\ClientIPAddresses\Create.cshtml" />
     <Content Include="Views\ClientIPAddresses\Delete.cshtml" />
     <Content Include="Views\ClientIPAddresses\Details.cshtml" />
     <Content Include="Views\ClientIPAddresses\Edit.cshtml" />
     <Content Include="Views\ClientIPAddresses\Index.cshtml" />
+    <Content Include="Views\UrlsIPAddresses\Create.cshtml" />
+    <Content Include="Views\UrlsIPAddresses\Delete.cshtml" />
+    <Content Include="Views\UrlsIPAddresses\Details.cshtml" />
+    <Content Include="Views\UrlsIPAddresses\Edit.cshtml" />
+    <Content Include="Views\UrlsIPAddresses\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using UrlShortenerMVC.Models;
 
 namespace UrlShortenerMVC.ViewModels
@@ -8,8 +9,8 @@ namespace UrlShortenerMVC.ViewModels
         public string UrlId { get; set; }
         public string IPAddressId { get; set; }
         public string UserId { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? ClickedAt { get; set; }
+
+        public DateTime ClickedAt { get; set; }
 
         public static implicit operator UrlsIPAddress(UrlsIPAddressViewModel model)
         {
@@ -17,8 +18,6 @@ namespace UrlShortenerMVC.ViewModels
             {
                 UrlId = model.UrlId,
                 IPAddressId = model.IPAddressId,
-                UserId = model.UserId,
-                CreatedAt = model.CreatedAt,
                 ClickedAt = model.ClickedAt
             };
         }
@@ -29,8 +28,6 @@ namespace UrlShortenerMVC.ViewModels
             {
                 UrlId = model.UrlId,
                 IPAddressId = model.IPAddressId,
-                UserId = model.UserId,
-                CreatedAt = model.CreatedAt,
                 ClickedAt = model.ClickedAt
             };
         }

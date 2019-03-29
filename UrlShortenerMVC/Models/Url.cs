@@ -23,10 +23,18 @@ namespace UrlShortenerMVC.Models
         public string Id { get; set; }
         public string LongUrl { get; set; }
         public string ShortUrl { get; set; }
+        public string UserId { get; set; }
+        public string IPAddressId { get; set; }
         public int Token { get; set; }
-        public System.DateTime CreatedAt { get; set; }
         public int Clicks { get; set; }
+        public int MaxClicks { get; set; }
+        public bool Expires { get; set; }
+        public Nullable<System.DateTime> ExpiresAt { get; set; }
+        public bool HasExpired { get; set; }
+        public System.DateTime CreatedAt { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
+        public virtual ClientIPAddress ClientIPAddress { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UrlsIPAddress> UrlsIPAddresses { get; set; }
     }

@@ -17,7 +17,7 @@ namespace UrlShortenerMVC.Controllers
         // GET: UrlsIPAddresses
         public ActionResult Index()
         {
-            var urlsIPAddresses = db.UrlsIPAddresses.Include(u => u.AspNetUser).Include(u => u.ClientIPAddress).Include(u => u.Url);
+            var urlsIPAddresses = db.UrlsIPAddresses.Include(u => u.ClientIPAddress).Include(u => u.Url);
             return View(urlsIPAddresses.ToList());
         }
 
@@ -39,8 +39,7 @@ namespace UrlShortenerMVC.Controllers
         // GET: UrlsIPAddresses/Create
         public ActionResult Create()
         {
-            ViewBag.UserId = new SelectList(db.AspNetUsers, "Id", "Email");
-            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IP");
+            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IPAddress");
             ViewBag.UrlId = new SelectList(db.Urls, "Id", "LongUrl");
             return View();
         }
@@ -50,7 +49,7 @@ namespace UrlShortenerMVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UrlId,IPAddressId,UserId,CreatedAt,ClickedAt")] UrlsIPAddress urlsIPAddress)
+        public ActionResult Create([Bind(Include = "UrlId,IPAddressId,ClickedAt")] UrlsIPAddress urlsIPAddress)
         {
             if (ModelState.IsValid)
             {
@@ -59,8 +58,7 @@ namespace UrlShortenerMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.UserId = new SelectList(db.AspNetUsers, "Id", "Email", urlsIPAddress.UserId);
-            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IP", urlsIPAddress.IPAddressId);
+            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IPAddress", urlsIPAddress.IPAddressId);
             ViewBag.UrlId = new SelectList(db.Urls, "Id", "LongUrl", urlsIPAddress.UrlId);
             return View(urlsIPAddress);
         }
@@ -77,8 +75,7 @@ namespace UrlShortenerMVC.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.UserId = new SelectList(db.AspNetUsers, "Id", "Email", urlsIPAddress.UserId);
-            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IP", urlsIPAddress.IPAddressId);
+            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IPAddress", urlsIPAddress.IPAddressId);
             ViewBag.UrlId = new SelectList(db.Urls, "Id", "LongUrl", urlsIPAddress.UrlId);
             return View(urlsIPAddress);
         }
@@ -88,7 +85,7 @@ namespace UrlShortenerMVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UrlId,IPAddressId,UserId,CreatedAt,ClickedAt")] UrlsIPAddress urlsIPAddress)
+        public ActionResult Edit([Bind(Include = "UrlId,IPAddressId,ClickedAt")] UrlsIPAddress urlsIPAddress)
         {
             if (ModelState.IsValid)
             {
@@ -96,8 +93,7 @@ namespace UrlShortenerMVC.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.UserId = new SelectList(db.AspNetUsers, "Id", "Email", urlsIPAddress.UserId);
-            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IP", urlsIPAddress.IPAddressId);
+            ViewBag.IPAddressId = new SelectList(db.ClientIPAddresses, "Id", "IPAddress", urlsIPAddress.IPAddressId);
             ViewBag.UrlId = new SelectList(db.Urls, "Id", "LongUrl", urlsIPAddress.UrlId);
             return View(urlsIPAddress);
         }

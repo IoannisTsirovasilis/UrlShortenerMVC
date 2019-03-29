@@ -8,9 +8,11 @@ using System.Web;
 using System.Web.Mvc;
 using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace UrlShortenerMVC.Controllers
 {
+    [Authorize]
     public class UrlsController : Controller
     {
         private Entities db = new Entities();
@@ -18,11 +20,12 @@ namespace UrlShortenerMVC.Controllers
 
         // GET: Urls
         public ActionResult Index()
-        {
-            return View(db.Urls.ToList());
+        {       
+            return View("Error");
         }
 
         // GET: Urls/Create
+        [AllowAnonymous]
         public ActionResult Create()
         {
             return View();
@@ -33,6 +36,7 @@ namespace UrlShortenerMVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Create([Bind(Include = "LongUrl")] UrlViewModel model)
         {
             if (ModelState.IsValid)

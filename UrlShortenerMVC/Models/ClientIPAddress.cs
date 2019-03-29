@@ -17,13 +17,16 @@ namespace UrlShortenerMVC.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ClientIPAddress()
         {
+            this.Urls = new HashSet<Url>();
             this.UrlsIPAddresses = new HashSet<UrlsIPAddress>();
         }
     
         public string Id { get; set; }
-        public string IP { get; set; }
+        public string IPAddress { get; set; }
         public System.DateTime CreatedAt { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Url> Urls { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UrlsIPAddress> UrlsIPAddresses { get; set; }
     }

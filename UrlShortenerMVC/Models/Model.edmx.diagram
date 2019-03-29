@@ -4,14 +4,15 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="4a234469f683491b92013c93e2cb4496" Name="Diagram1">
-        <EntityTypeShape EntityType="Models.AspNetUser" Width="1.5" PointX="1.75" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="Models.Url" Width="1.5" PointX="4.375" PointY="3.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Models.UrlsIPAddress" Width="1.5" PointX="4.5" PointY="0.625" IsExpanded="true" />
-        <AssociationConnector Association="Models.FK_UrlsIPAddresses_AspNetUsers" ManuallyRouted="false" />
+      <Diagram DiagramId="50f72ecce8d44f2c9a56c4aafa1cf9dc" Name="Diagram1">
+        <EntityTypeShape EntityType="Models.AspNetUser" Width="1.5" PointX="3.625" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Models.ClientIPAddress" Width="1.5" PointX="10" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Models.Url" Width="1.5" PointX="6.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Models.UrlsIPAddress" Width="1.5" PointX="9.75" PointY="1.375" IsExpanded="true" />
+        <AssociationConnector Association="Models.FK_Urls_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="Models.FK_Urls_ClientIPAddresses" ManuallyRouted="false" />
+        <AssociationConnector Association="Models.FK_UrlsIPAddresses_ClientIPAddresses" ManuallyRouted="false" />
         <AssociationConnector Association="Models.FK_UrlsIPAddresses_Urls" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="Models.ClientIPAddress" Width="1.5" PointX="7.125" PointY="1" />
-        <AssociationConnector Association="Models.FK_UrlsIPAddresses_ClientIPAddresses" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
