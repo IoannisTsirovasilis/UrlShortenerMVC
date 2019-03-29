@@ -35,12 +35,6 @@ namespace UrlShortenerMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "LongUrl")] UrlViewModel model)
         {
-            model.LongUrl = model.LongUrl.Trim();
-            if (!Uri.IsWellFormedUriString(model.LongUrl, UriKind.Absolute))
-            {
-                ModelState.AddModelError("InvalidUrl", "Please enter a valid url");
-                return View(model);
-            }
             if (ModelState.IsValid)
             {
                 do
@@ -48,7 +42,7 @@ namespace UrlShortenerMVC.Controllers
                     model.Id = Guid.NewGuid().ToString();
                 } while (db.Urls.Find(model.Id) != null);
 
-                model.Token = GenerateLongToShortKey();
+                model.Token = GenerateLongToShortToken();
                 var temp = model.Token;
                 model.ShortUrl = "http://192.168.1.2:6677/";
                 do
@@ -68,7 +62,7 @@ namespace UrlShortenerMVC.Controllers
             return View(model);
         }
 
-        private int GenerateLongToShortKey()
+        private int GenerateLongToShortToken()
         {
             var r = new Random();
             int token;

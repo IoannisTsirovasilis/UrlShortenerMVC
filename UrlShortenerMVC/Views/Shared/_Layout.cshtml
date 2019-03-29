@@ -3,30 +3,32 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - Short.me</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
 <body class="p-0">
-    <nav class="navbar navbar-light navbar-expand-lg mb-3" style="background-color: #ffad33;">
+    <nav class="navbar navbar-light navbar-expand-lg mb-3 bg-orange">
         <div class="container">
-            <span class="navbar-brand">Short.me</span>
+            @Html.ActionLink("Short.me", "Create", "Urls", routeValues: null, htmlAttributes: new { @class = "navbar-brand" })
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav mr-auto"></ul>
+                @Html.Partial("_LoginPartial")
             </div>
         </div>
     </nav>
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
+    <footer class="fixed-bottom navbar navbar-light navbar-expand mt-3 bg-orange">
+        <div class="container">
+            <span>&copy; @DateTime.Now.Year - Short.me</span>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
