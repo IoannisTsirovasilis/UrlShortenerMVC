@@ -10,18 +10,12 @@ namespace UrlShortenerMVC.ViewModels
 
         [Required]
         [MaxLength(128, ErrorMessage = "{0} cannot exceed {1} characters.")]
-        // [RegularExpression(@"^http(s)?://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$", ErrorMessage = "Please enter a valid Url.")]
         [Display(Name = "Enter Url")]
         public string LongUrl { get; set; }
 
         public string ShortUrl { get; set; }
-        public int Key { get; set; }
+        public int Token { get; set; }
         public DateTime CreatedAt { get; set; }
-        public bool Expires { get; set; }
-        public DateTime? ExpiresAt { get; set; }
-        public int MaxClicks { get; set; }
-        public int CurrentClicks { get; set; }
-        public bool IsActive { get; set; }
 
         public static implicit operator Url(UrlViewModel model)
         {
@@ -30,13 +24,7 @@ namespace UrlShortenerMVC.ViewModels
                 Id = model.Id,
                 LongUrl = model.LongUrl,
                 ShortUrl = model.ShortUrl,
-                Key = model.Key,
-                CreatedAt = model.CreatedAt,
-                Expires = model.Expires,
-                ExpiresAt = model.ExpiresAt,
-                MaxClicks = model.MaxClicks,
-                CurrentClicks = model.CurrentClicks,
-                IsActive = model.IsActive
+                Token = model.Token
             };
         }
 
@@ -47,13 +35,7 @@ namespace UrlShortenerMVC.ViewModels
                 Id = model.Id,
                 LongUrl = model.LongUrl,
                 ShortUrl = model.ShortUrl,
-                Key = model.Key,
-                CreatedAt = model.CreatedAt,
-                Expires = model.Expires,
-                ExpiresAt = model.ExpiresAt,
-                MaxClicks = model.MaxClicks,
-                CurrentClicks = model.CurrentClicks,
-                IsActive = model.IsActive
+                Token = model.Token
             };
         }
     }
