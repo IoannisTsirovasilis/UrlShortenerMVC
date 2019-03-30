@@ -1,6 +1,6 @@
 ﻿@model UrlShortenerMVC.Models.RegisterViewModel
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal container", role = "form" }))
 {
     @Html.AntiForgeryToken()
     <h4>Create your free account.</h4>

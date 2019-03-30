@@ -8,12 +8,19 @@
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
-<body class="p-0 bg-light">
-    @{ Html.RenderPartial("_Navbar"); }
-    <div class="container body-content">
-        @RenderBody()
+<body class="p-0 bg-light">    
+    <div class="container-fluid body-content d-flex p-0 ">
+        @if (User.Identity.IsAuthenticated)
+        {
+            Html.RenderPartial("_SideNavbar");
+        }
+        <div class="col p-0 d-flex flex-column">
+            @{ Html.RenderPartial("_Navbar"); }
+            @RenderBody()
+            @{ Html.RenderPartial("_Footer"); }
+        </div>
+        
     </div>
-    @{ Html.RenderPartial("_Footer"); }
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

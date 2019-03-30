@@ -1,4 +1,8 @@
-﻿.bg-orange {
+﻿.side-navbar {
+    z-index: 1050;
+}
+
+.bg-orange {
     background-color: #ff9900 !important;
 }
 

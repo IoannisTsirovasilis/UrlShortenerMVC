@@ -1,0 +1,31 @@
+﻿<nav class="navbar navbar-dark navbar-expand-lg vh-100 align-items-start side-navbar bg-dark p-0">
+    <div class="flex-column">        
+        <button class="navbar-toggler m-2" type="button" data-toggle="collapse" data-target="#sideNavbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse flex-column align-items-start vh-100" id="sideNavbarText">
+            @Html.ActionLink("Short.me", "Create", "Urls", routeValues: null, htmlAttributes: new { @class = "navbar-brand px-2" })
+            <form>
+                <div class="input-group input-group-sm mb-3 px-2">
+                    <input type="text" class="form-control" placeholder="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-light btn-sm" type="submit"><img src="~/Content/images/search-icon.png" height="15" width="15" alt="Search" /></button>
+                    </div>
+                </div>
+            </form>
+            <div class="navbar-nav flex-column border-bottom border-top w-100">
+                <a class="btn btn-dark text-left" href="/">Dashboard</a>
+            </div>
+            <ul class="navbar-nav flex-column border-bottom w-100 px-1">
+                <li class="nav-link nav-item active">Total Links: 45</li>
+                <li class="nav-link nav-item active">Total Clicks: 22</li>
+            </ul>
+            <div class="navbar-nav flex-column w-100">
+                <a class="btn btn-dark text-left border-bottom" href="/">Links</a>
+                <a class="btn btn-dark text-left border-bottom" href="/">Settings</a>
+                <a class="btn btn-dark text-left border-bottom" href="/">Log off</a>
+            </div>
+        </div>
+    </div>
+    
+</nav>
