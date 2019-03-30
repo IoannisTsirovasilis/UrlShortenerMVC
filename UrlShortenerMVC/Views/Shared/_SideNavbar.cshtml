@@ -23,7 +23,11 @@
             <div class="navbar-nav flex-column w-100">
                 <a class="btn btn-dark text-left border-bottom" href="/">Links</a>
                 <a class="btn btn-dark text-left border-bottom" href="/">Settings</a>
-                <a class="btn btn-dark text-left border-bottom" href="/">Log off</a>
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "w-100" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <a class="btn btn-dark text-left border-bottom w-100" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+                }
             </div>
         </div>
     </div>
