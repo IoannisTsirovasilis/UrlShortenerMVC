@@ -22,6 +22,7 @@
             </ul>
             <div class="navbar-nav flex-column w-100">
                 <a class="btn btn-dark text-left border-bottom" href="/">Links</a>
+                @Html.ActionLink("Short Excel", "ShortExcel", "Urls", null, new { @class = "btn btn-dark text-left border-bottom" })
                 <a class="btn btn-dark text-left border-bottom" href="/">Settings</a>
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "w-100" }))
                 {
