@@ -1,0 +1,24 @@
+﻿@model UrlShortenerMVC.ViewModels.ShortExcelViewModel
+
+@using (Html.BeginForm("ShortExcel", "Urls", FormMethod.Post, new { @class = "form-horizontal container mt-3", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="input-group">
+        <div class="custom-file">
+            @Html.EditorFor(model => model.File, new { htmlAttributes = new { @class = "custom-file-input", type = "file", aria_describedby = "inputFile", onchange = "changeFilePlaceholder()" } })
+            <label id="BrowseFileButton" class="custom-file-label" for="File">Choose file</label>
+        </div>
+        <div class="input-group-append">
+            <button class="btn btn-orange rounded-right" type="submit" id="inputFile">SHORTEN</button>
+        </div>
+    </div>
+    @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
+    <div class="text-danger">@ViewBag.Error</div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/shortExcel")
+}
