@@ -23,3 +23,11 @@
 a.text-orange:hover, a.text-orange:focus {
     color: #b36b00 !important;
 }
+
+.bg-pale-red {
+    background-color: #f8d7da !important;
+}
+
+.text-pale-red {
+    color: #721c24;
+}

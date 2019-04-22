@@ -1,0 +1,48 @@
+﻿@model UrlShortenerMVC.Models.Campaign
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete Campaign</h2>
+
+<h3>Are you sure? This action will render all links, associated to this campaign, inactive.</h3>
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Model.StartDate.ToShortDateString()
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+
+        <dd>
+            @Model.EndDate.ToShortDateString()
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-danger" />           
+        </div>
+    }
+        <div class="mt-2">
+            @Html.ActionLink("Back to Campaigns", "Index")
+        </div>
+</div>

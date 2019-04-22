@@ -1,0 +1,42 @@
+﻿@model UrlShortenerMVC.ViewModels.CampaignViewModel
+
+<h2>Campaign Details</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EndDate)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink(HttpUtility.HtmlDecode("&#9998;"), "Edit", new { id = Model.Id }, new { @class = "mr-2 btn btn-warning", data_toggle = "tooltip", title = "Edit" })
+</p>
+
+<div class="mt-2">
+    @Html.ActionLink("Back to Campaigns", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/tooltip-init")
+}

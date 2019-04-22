@@ -20,15 +20,28 @@ namespace UrlShortenerMVC
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+                      "~/Scripts/bootstrap.bundle.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/shortExcel").Include(
-                         "~/Scripts/Custom/shortExcel.js"));
+            bundles.Add(new ScriptBundle("~/bundles/short-excel").Include(
+                         "~/Scripts/Custom/short-excel.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-datepicker").Include(
+                         "~/Scripts/bootstrap-datepicker.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/datepicker-init").Include(
+                         "~/Scripts/Custom/datepicker-init.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/tooltip-init").Include(
+                         "~/Scripts/Custom/tooltip-init.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/toast-init").Include(
+                         "~/Scripts/Custom/toast-init.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
-                      "~/Content/custom/custom.css"));
+                      "~/Content/Custom/styles.css",
+                      "~/Content/bootstrap-datepicker3.standalone.css"));
         }
     }
 }

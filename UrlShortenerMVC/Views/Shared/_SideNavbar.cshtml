@@ -11,7 +11,7 @@
                 <div class="input-group input-group-sm mb-3 px-2">
                     <input type="text" class="form-control" placeholder="Search">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-light btn-sm" type="submit"><img src="~/Content/images/search-icon.png" height="15" width="15" alt="Search" /></button>
+                        <button class="btn btn-outline-light btn-sm" type="submit"><img src="~/Content/Images/search-icon.png" height="15" width="15" alt="Search" /></button>
                     </div>
                 </div>
             </form>
@@ -23,6 +23,7 @@
                 <li class="nav-link nav-item active">Total Clicks: @Model.TotalClicks</li>
             </ul>
             <div class="navbar-nav flex-column w-100">
+                @Html.ActionLink("Campaigns", "Index", "Campaigns", null, new { @class = "btn btn-dark text-left border-bottom" })
                 @Html.ActionLink("Links", "Index", "Urls", null, new { @class = "btn btn-dark text-left border-bottom" })
                 @Html.ActionLink("Short Excel", "ShortExcel", "Urls", null, new { @class = "btn btn-dark text-left border-bottom" })
                 <a class="btn btn-dark text-left border-bottom" href="/">Settings</a>

@@ -41,6 +41,10 @@ namespace UrlShortenerMVC.ViewModels
         [Display(Name = "Date Created")]
         public DateTime CreatedAt { get; set; }
 
+        public string CampaignId { get; set; }
+
+        public Campaign Campaign { get; set; }
+
         public static implicit operator Url(UrlViewModel model)
         {
             return new Url
@@ -56,8 +60,8 @@ namespace UrlShortenerMVC.ViewModels
                 Expires = model.Expires,
                 ExpiresAt = model.ExpiresAt,
                 HasExpired = model.HasExpired,
-                CreatedAt = model.CreatedAt
-
+                CreatedAt = model.CreatedAt,
+                CampaignId = model.CampaignId
             };
         }
 
@@ -78,7 +82,9 @@ namespace UrlShortenerMVC.ViewModels
                 Expires = model.Expires,
                 ExpiresAt = model.ExpiresAt,
                 HasExpired = model.HasExpired,
-                CreatedAt = model.CreatedAt
+                CreatedAt = model.CreatedAt,
+                CampaignId = model.CampaignId,
+                Campaign = model.Campaign
             };
         }
     }

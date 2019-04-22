@@ -7,12 +7,12 @@
       <Diagram DiagramId="50f72ecce8d44f2c9a56c4aafa1cf9dc" Name="Diagram1">
         <EntityTypeShape EntityType="Models.AspNetUser" Width="1.5" PointX="5.125" PointY="0.5" IsExpanded="true" />
         <EntityTypeShape EntityType="Models.ClientIPAddress" Width="1.5" PointX="9.75" PointY="0.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="Models.Url" Width="1.5" PointX="7.625" PointY="0.5" IsExpanded="true" />
-        <AssociationConnector Association="Models.FK_Urls_AspNetUsers" ManuallyRouted="false" />
-        <AssociationConnector Association="Models.FK_Urls_ClientIPAddresses" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="Models.Campaign" Width="1.5" PointX="2.625" PointY="0.5" />
+        <EntityTypeShape EntityType="Models.Campaign" Width="1.5" PointX="3.125" PointY="0.5" />
+        <EntityTypeShape EntityType="Models.Url" Width="1.5" PointX="7.5" PointY="0.5" />
         <AssociationConnector Association="Models.FK_Campaigns_AspNetUsers" />
-        <AssociationConnector Association="Models.CampaignsUrls" />
+        <AssociationConnector Association="Models.FK_Urls_AspNetUsers" />
+        <AssociationConnector Association="Models.FK_Urls_Campaigns" />
+        <AssociationConnector Association="Models.FK_Urls_ClientIPAddresses" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

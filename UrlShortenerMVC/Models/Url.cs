@@ -14,16 +14,11 @@ namespace UrlShortenerMVC.Models
     
     public partial class Url
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Url()
-        {
-            this.Campaigns = new HashSet<Campaign>();
-        }
-    
         public string Id { get; set; }
         public string LongUrl { get; set; }
         public string ShortUrl { get; set; }
         public string UserId { get; set; }
+        public string CampaignId { get; set; }
         public string IPAddressId { get; set; }
         public int Token { get; set; }
         public int Clicks { get; set; }
@@ -34,8 +29,7 @@ namespace UrlShortenerMVC.Models
         public System.DateTime CreatedAt { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
+        public virtual Campaign Campaign { get; set; }
         public virtual ClientIPAddress ClientIPAddress { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Campaign> Campaigns { get; set; }
     }
 }

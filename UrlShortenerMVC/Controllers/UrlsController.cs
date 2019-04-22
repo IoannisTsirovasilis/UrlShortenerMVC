@@ -45,110 +45,125 @@ namespace UrlShortenerMVC.Controllers
         }
 
         // GET: Urls/ShortExcel
-        public ActionResult ShortExcel()
+        public ActionResult ShortExcel(string campaignId)
         {
-            return View();
+            var model = new ShortExcelViewModel { CampaignId = campaignId };
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult ShortExcel(HttpPostedFileBase file)
+        public ActionResult ShortExcel(HttpPostedFileBase file, string campaignId)
         {
-            try
+            using (var dbContextTransaction = db.Database.BeginTransaction())
             {
-                if (file.ContentLength > 0)
+                try
                 {
-                    string filePath = Path.Combine(HttpContext.Server.MapPath("~/TempFiles"),
-                    Path.GetFileName(file.FileName));
-                    file.SaveAs(filePath);
-                    DataSet ds = new DataSet();
-
-                    //A 32-bit provider which enables the use of
-
-                    string ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + @";Extended Properties=""Excel 12.0 Xml;HDR=Yes;IMEX=1;""";
-                    var package = new ExcelPackage();
-                    using (OleDbConnection conn = new OleDbConnection(ConnectionString))
+                    if (file.ContentLength > 0)
                     {
-                        conn.Open();
-                        using (DataTable dtExcelSchema = conn.GetSchema("Tables"))
+                        string filePath = Path.Combine(HttpContext.Server.MapPath("~/TempFiles"),
+                        Path.GetFileName(file.FileName));
+                        file.SaveAs(filePath);
+                        DataSet ds = new DataSet();
+
+                        //A 32-bit provider which enables the use of
+
+                        string ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + @";Extended Properties=""Excel 12.0 Xml;HDR=Yes;IMEX=1;""";
+                        var package = new ExcelPackage();
+
+                        using (OleDbConnection conn = new OleDbConnection(ConnectionString))
                         {
-                            string sheetName = dtExcelSchema.Rows[0]["TABLE_NAME"].ToString();
-                            string query = "SELECT * FROM [" + sheetName + "]";
-                            using (OleDbCommand command = new OleDbCommand(query, conn))
-                            using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))
-                            { adapter.Fill(ds); }
-                            if (ds.Tables.Count > 0)
+                            conn.Open();
+                            using (DataTable dtExcelSchema = conn.GetSchema("Tables"))
                             {
-                                if (ds.Tables[0].Rows.Count > 0)
+                                string sheetName = dtExcelSchema.Rows[0]["TABLE_NAME"].ToString();
+                                string query = "SELECT * FROM [" + sheetName + "]";
+                                using (OleDbCommand command = new OleDbCommand(query, conn))
+                                using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))
+                                { adapter.Fill(ds); }
+                                if (ds.Tables.Count > 0)
                                 {
-                                    var worksheet = package.Workbook.Worksheets.Add("New Sheet");
-                                    worksheet.Cells[1, 1].Value = "Long";
-                                    worksheet.Cells[1, 2].Value = "Short";
-                                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                                    if (ds.Tables[0].Rows.Count > 0)
                                     {
-                                        var token = GenerateLongToShortToken();
-                                        var shortUrl = ShortUrl(token);
-                                        var isValidUrl = Uri.IsWellFormedUriString(ds.Tables[0].Rows[i][0].ToString(), UriKind.Absolute);
-                                        if (!isValidUrl)
+                                        var worksheet = package.Workbook.Worksheets.Add("New Sheet");
+                                        worksheet.Cells[1, 1].Value = "Long";
+                                        worksheet.Cells[1, 2].Value = "Short";
+                                        for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                                         {
+                                            var token = GenerateLongToShortToken();
+                                            var shortUrl = ShortUrl(token);
+                                            var isValidUrl = Uri.IsWellFormedUriString(ds.Tables[0].Rows[i][0].ToString(), UriKind.Absolute);
+                                            if (!isValidUrl)
+                                            {
+                                                worksheet.Cells[i + 2, 1].Value = ds.Tables[0].Rows[i][0].ToString();
+                                                worksheet.Cells[i + 2, 2].Value = "Invalid Url";
+                                                continue;
+                                            }
                                             worksheet.Cells[i + 2, 1].Value = ds.Tables[0].Rows[i][0].ToString();
-                                            worksheet.Cells[i + 2, 2].Value = "Invalid Url";
-                                            continue;
-                                        }
-                                        worksheet.Cells[i + 2, 1].Value = ds.Tables[0].Rows[i][0].ToString();
-                                        worksheet.Cells[i + 2, 2].Value = shortUrl;
-                                        var model = new UrlViewModel();
-                                        do
-                                        {
-                                            model.Id = Guid.NewGuid().ToString();
-                                        } while (db.Urls.Find(model.Id) != null);
-                                        model.Token = token;
-                                        model.ShortUrl = shortUrl;
-                                        model.LongUrl = ds.Tables[0].Rows[i][0].ToString();
-                                        var userIP = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).ToList();
-                                        if (userIP.Count == 0)
-                                        {
-                                            var ipAddress = new ClientIPAddress();
+                                            worksheet.Cells[i + 2, 2].Value = shortUrl;
+                                            var model = new UrlViewModel();
                                             do
                                             {
-                                                ipAddress.Id = Guid.NewGuid().ToString();
-                                            } while (db.ClientIPAddresses.Find(ipAddress.Id) != null);
-                                            ipAddress.IPAddress = Request.UserHostAddress;
-                                            ipAddress.CreatedAt = DateTime.Now;
-                                            db.ClientIPAddresses.Add(ipAddress);
+                                                model.Id = Guid.NewGuid().ToString();
+                                            } while (db.Urls.Find(model.Id) != null);
+                                            model.Token = token;
+                                            model.ShortUrl = shortUrl;
+                                            model.LongUrl = ds.Tables[0].Rows[i][0].ToString();
+                                            var userIP = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).ToList();
+                                            if (userIP.Count == 0)
+                                            {
+                                                var ipAddress = new ClientIPAddress();
+                                                do
+                                                {
+                                                    ipAddress.Id = Guid.NewGuid().ToString();
+                                                } while (db.ClientIPAddresses.Find(ipAddress.Id) != null);
+                                                ipAddress.IPAddress = Request.UserHostAddress;
+                                                ipAddress.CreatedAt = DateTime.Now;
+                                                db.ClientIPAddresses.Add(ipAddress);
+                                                db.SaveChanges();
+                                            }
+                                            if (User.Identity.IsAuthenticated) model.UserId = User.Identity.GetUserId();
+                                            model.Clicks = 0;
+                                            model.MaxClicks = 0;
+                                            model.Expires = false;
+                                            model.HasExpired = false;
+                                            model.IPAddressId = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).First().Id;
+                                            model.CreatedAt = DateTime.Now;
+                                            var campaign = db.Campaigns.Find(campaignId);
+                                            if (campaign != null && campaign.CreatedBy == User.Identity.GetUserId())
+                                            {
+                                                model.CampaignId = campaign.Id;
+                                            }
+
+                                            db.Urls.Add(model);
                                             db.SaveChanges();
                                         }
-                                        if (User.Identity.IsAuthenticated) model.UserId = User.Identity.GetUserId();
-                                        model.Clicks = 0;
-                                        model.MaxClicks = 0;
-                                        model.Expires = false;
-                                        model.HasExpired = false;
-                                        model.IPAddressId = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).First().Id;
-                                        model.CreatedAt = DateTime.Now;
-
-                                        db.Urls.Add(model);
-                                    }    
+                                    }
                                 }
                             }
                         }
+                        dbContextTransaction.Commit();
+                        System.IO.File.Delete(filePath);
+                        return File(new MemoryStream(package.GetAsByteArray()), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Test.xlsx");
                     }
-                    System.IO.File.Delete(filePath);
-                    return File(new MemoryStream(package.GetAsByteArray()), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Test.xlsx");
+                }
+                catch (Exception ex)
+                {
+                    dbContextTransaction.Rollback();
+                    ViewBag.Error = ex.Message;
+                    return View(new ShortExcelViewModel { CampaignId = campaignId });
                 }
             }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                return View();
-            }
+            
             ViewBag.Error = "Oops! Something went wrong.";
-            return View();
+            return View(new ShortExcelViewModel { CampaignId = campaignId });
         }
 
         // GET: Urls/Create
         [AllowAnonymous]
-        public ActionResult Create()
+        public ActionResult Create(string campaignId)
         {
-            return View();
+            var model = new UrlViewModel { CampaignId = campaignId };
+            return View(model);
         }
 
         // POST: Urls/Create
@@ -157,44 +172,59 @@ namespace UrlShortenerMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public ActionResult Create([Bind(Include = "LongUrl")] UrlViewModel model)
+        public ActionResult Create([Bind(Include = "LongUrl,CampaignId")] UrlViewModel model)
         {
             if (ModelState.IsValid)
             {
-                do
+                using (var dbContextTransaction = db.Database.BeginTransaction())
                 {
-                    model.Id = Guid.NewGuid().ToString();
-                } while (db.Urls.Find(model.Id) != null);
-
-                model.Token = GenerateLongToShortToken();
-                model.ShortUrl = ShortUrl(model.Token);
-                var userIP = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).ToList();
-                if (userIP.Count == 0)
-                {
-                    var ipAddress = new ClientIPAddress();
-                    do
+                    try
                     {
-                        ipAddress.Id = Guid.NewGuid().ToString();
-                    } while (db.ClientIPAddresses.Find(ipAddress.Id) != null);
-                    ipAddress.IPAddress = Request.UserHostAddress;
-                    ipAddress.CreatedAt = DateTime.Now;
-                    db.ClientIPAddresses.Add(ipAddress);
-                    db.SaveChanges();
-                }
-                if (User.Identity.IsAuthenticated) model.UserId = User.Identity.GetUserId();
-                model.Clicks = 0;
-                model.MaxClicks = 0;
-                model.Expires = false;
-                model.HasExpired = false;
-                model.IPAddressId = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).First().Id;
-                model.CreatedAt = DateTime.Now;
+                        do
+                        {
+                            model.Id = Guid.NewGuid().ToString();
+                        } while (db.Urls.Find(model.Id) != null);
 
-                db.Urls.Add(model);
-                db.SaveChanges();
-                
-                return View(new UrlViewModel { LongUrl = model.LongUrl, ShortUrl = model.ShortUrl });
+                        model.Token = GenerateLongToShortToken();
+                        model.ShortUrl = ShortUrl(model.Token);
+                        var userIP = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).ToList();
+                        if (userIP.Count == 0)
+                        {
+                            var ipAddress = new ClientIPAddress();
+                            do
+                            {
+                                ipAddress.Id = Guid.NewGuid().ToString();
+                            } while (db.ClientIPAddresses.Find(ipAddress.Id) != null);
+                            ipAddress.IPAddress = Request.UserHostAddress;
+                            ipAddress.CreatedAt = DateTime.Now;
+                            db.ClientIPAddresses.Add(ipAddress);
+                            db.SaveChanges();
+                        }
+                        if (User.Identity.IsAuthenticated) model.UserId = User.Identity.GetUserId();
+                        model.Clicks = 0;
+                        model.MaxClicks = 0;
+                        model.Expires = false;
+                        model.HasExpired = false;
+                        model.IPAddressId = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).First().Id;
+                        model.CreatedAt = DateTime.Now;
+                        var campaign = db.Campaigns.Find(model.CampaignId);
+                        if (campaign != null && campaign.CreatedBy == User.Identity.GetUserId())
+                        {
+                            model.CampaignId = campaign.Id;
+                        }
+                        db.Urls.Add(model);
+                        db.SaveChanges();
+
+                        dbContextTransaction.Commit();
+                        return View(new UrlViewModel { LongUrl = model.LongUrl, ShortUrl = model.ShortUrl, CampaignId = model.CampaignId });
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContextTransaction.Rollback();
+                        return View(model);
+                    }
+                }                
             }
-
             return View(model);
         }
 
