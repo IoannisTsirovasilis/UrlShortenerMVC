@@ -1,4 +1,6 @@
-﻿<nav class="navbar navbar-dark navbar-expand-lg vh-100 align-items-start side-navbar bg-dark p-0">
+﻿@model UrlShortenerMVC.ViewModels.HomeViewModel
+
+<nav class="navbar navbar-dark navbar-expand-lg vh-100 align-items-start side-navbar bg-dark p-0">
     <div class="flex-column">        
         <button class="navbar-toggler m-2" type="button" data-toggle="collapse" data-target="#sideNavbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -17,11 +19,11 @@
                 <a class="btn btn-dark text-left" href="/Dashboard/Index">Dashboard</a>
             </div>
             <ul class="navbar-nav flex-column border-bottom w-100 px-1">
-                <li class="nav-link nav-item active">Total Links: 45</li>
-                <li class="nav-link nav-item active">Total Clicks: 22</li>
+                <li class="nav-link nav-item active">Total Links: @Model.TotalLinks</li>
+                <li class="nav-link nav-item active">Total Clicks: @Model.TotalClicks</li>
             </ul>
             <div class="navbar-nav flex-column w-100">
-                <a class="btn btn-dark text-left border-bottom" href="/">Links</a>
+                @Html.ActionLink("Links", "Index", "Urls", null, new { @class = "btn btn-dark text-left border-bottom" })
                 @Html.ActionLink("Short Excel", "ShortExcel", "Urls", null, new { @class = "btn btn-dark text-left border-bottom" })
                 <a class="btn btn-dark text-left border-bottom" href="/">Settings</a>
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "w-100" }))

@@ -35,7 +35,7 @@ namespace UrlShortenerMVC.ViewModels
         [Display(Name = "Expiration Date")]
         public DateTime? ExpiresAt { get; set; }
 
-        [Display(Name ="Is Expired")]
+        [Display(Name ="Has Expired")]
         public bool HasExpired { get; set; }
 
         [Display(Name = "Date Created")]

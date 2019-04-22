@@ -27,7 +27,19 @@ namespace UrlShortenerMVC.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var userId = User.Identity.GetUserId();
-                return View(db.Urls.Where(u => u.UserId == userId).ToList().Cast<UrlViewModel>());
+
+                return View(db.Urls.Where(u => u.UserId == userId).ToList().Select(x => new UrlViewModel
+                {
+                    Id = x.Id,
+                    ShortUrl = x.ShortUrl,
+                    LongUrl = x.LongUrl,
+                    Clicks = x.Clicks,
+                    CreatedAt = x.CreatedAt,
+                    Expires = x.Expires,
+                    ExpiresAt = x.ExpiresAt,
+                    HasExpired = x.HasExpired,
+                    MaxClicks = x.MaxClicks
+                }));
             }
             return View("Error");
         }
@@ -186,6 +198,28 @@ namespace UrlShortenerMVC.Controllers
             return View(model);
         }
 
+        public ActionResult SideNavbar()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = User.Identity.GetUserId();
+
+                return View(db.Urls.Where(u => u.UserId == userId).ToList().Select(x => new UrlViewModel
+                {
+                    Id = x.Id,
+                    ShortUrl = x.ShortUrl,
+                    LongUrl = x.LongUrl,
+                    Clicks = x.Clicks,
+                    CreatedAt = x.CreatedAt,
+                    Expires = x.Expires,
+                    ExpiresAt = x.ExpiresAt,
+                    HasExpired = x.HasExpired,
+                    MaxClicks = x.MaxClicks
+                }));
+            }
+            return View("Error");
+        }
+
         private int GenerateLongToShortToken()
         {
             var r = new Random();
@@ -201,7 +235,7 @@ namespace UrlShortenerMVC.Controllers
 
         private string ShortUrl(int token)
         {
-            var shortUrl = "http://192.168.1.2:6677/";
+            var shortUrl = "http://2.87.93.82:6677/";
             do
             {
                 shortUrl += base62[token % 62];
