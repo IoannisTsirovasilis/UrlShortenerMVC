@@ -45,8 +45,9 @@ namespace UrlShortenerMVC.Controllers
         }
 
         // GET: Urls/ShortExcel
-        public ActionResult ShortExcel(string campaignId)
+        public ActionResult ShortExcel(string campaignId, string error)
         {
+            ViewBag.Toast = string.IsNullOrWhiteSpace(error) ? "NoError" : error;
             var model = new ShortExcelViewModel { CampaignId = campaignId };
             return View(model);
         }
@@ -98,6 +99,26 @@ namespace UrlShortenerMVC.Controllers
                                                 worksheet.Cells[i + 2, 2].Value = "Invalid Url";
                                                 continue;
                                             }
+                                            var tmp = ds.Tables[0].Rows[i][0].ToString();
+                                            var user = db.AspNetUsers.Find(User.Identity.GetUserId());
+                                            
+                                            if (user == null)
+                                            {
+                                                return RedirectToAction("ShortExcel", new { campaignId, error = "Error" });
+                                            }
+                                            campaignId = string.IsNullOrWhiteSpace(campaignId) ? null : campaignId;
+                                            var campaign = db.Campaigns.Find(campaignId);
+                                            if (campaign != null && campaign.CreatedBy != user.Id)
+                                            {
+                                                return RedirectToAction("ShortExcel", new { campaignId, error = "Error" });
+                                            }
+                                            var url = db.Urls.Where(x => x.LongUrl == tmp && x.UserId == user.Id && x.CampaignId == campaignId).ToList();
+                                            if (url.Count > 0)
+                                            {
+                                                worksheet.Cells[i + 2, 1].Value = url.First().LongUrl;
+                                                worksheet.Cells[i + 2, 2].Value = url.First().ShortUrl;
+                                                continue;
+                                            }
                                             worksheet.Cells[i + 2, 1].Value = ds.Tables[0].Rows[i][0].ToString();
                                             worksheet.Cells[i + 2, 2].Value = shortUrl;
                                             var model = new UrlViewModel();
@@ -128,11 +149,7 @@ namespace UrlShortenerMVC.Controllers
                                             model.HasExpired = false;
                                             model.IPAddressId = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).First().Id;
                                             model.CreatedAt = DateTime.Now;
-                                            var campaign = db.Campaigns.Find(campaignId);
-                                            if (campaign != null && campaign.CreatedBy == User.Identity.GetUserId())
-                                            {
-                                                model.CampaignId = campaign.Id;
-                                            }
+                                            if (campaign != null) model.CampaignId = campaign.Id;
 
                                             db.Urls.Add(model);
                                             db.SaveChanges();
@@ -150,18 +167,17 @@ namespace UrlShortenerMVC.Controllers
                 {
                     dbContextTransaction.Rollback();
                     ViewBag.Error = ex.Message;
-                    return View(new ShortExcelViewModel { CampaignId = campaignId });
+                    return RedirectToAction("ShortExcel", new { campaignId, error = "Error" });
                 }
             }
-            
-            ViewBag.Error = "Oops! Something went wrong.";
-            return View(new ShortExcelViewModel { CampaignId = campaignId });
+            return RedirectToAction("ShortExcel", new { campaignId, error = "Error" });
         }
 
         // GET: Urls/Create
         [AllowAnonymous]
-        public ActionResult Create(string campaignId)
+        public ActionResult Create(string campaignId, string error)
         {
+            ViewBag.Toast = string.IsNullOrWhiteSpace(error) ? "NoError" : error;
             var model = new UrlViewModel { CampaignId = campaignId };
             return View(model);
         }
@@ -174,6 +190,7 @@ namespace UrlShortenerMVC.Controllers
         [AllowAnonymous]
         public ActionResult Create([Bind(Include = "LongUrl,CampaignId")] UrlViewModel model)
         {
+            ViewBag.Toast = "NoError";
             if (ModelState.IsValid)
             {
                 using (var dbContextTransaction = db.Database.BeginTransaction())
@@ -185,8 +202,6 @@ namespace UrlShortenerMVC.Controllers
                             model.Id = Guid.NewGuid().ToString();
                         } while (db.Urls.Find(model.Id) != null);
 
-                        model.Token = GenerateLongToShortToken();
-                        model.ShortUrl = ShortUrl(model.Token);
                         var userIP = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).ToList();
                         if (userIP.Count == 0)
                         {
@@ -200,6 +215,22 @@ namespace UrlShortenerMVC.Controllers
                             db.ClientIPAddresses.Add(ipAddress);
                             db.SaveChanges();
                         }
+
+                        var user = db.AspNetUsers.Find(User.Identity.GetUserId());
+                        if (user == null)
+                        {
+                            return RedirectToAction("Create", new { campaignId = model.CampaignId, error = "Error" });
+                        }
+                        // If url has already been shortened by this user, return it
+                        var url = db.Urls.Where(x => x.LongUrl == model.LongUrl && x.UserId == user.Id && x.CampaignId == model.CampaignId).ToList();
+                        if (url.Count > 0)
+                        {
+                            return View(new UrlViewModel { LongUrl = url.First().LongUrl, ShortUrl = url.First().ShortUrl, CampaignId = url.First().CampaignId });
+                        }
+
+                        model.Token = GenerateLongToShortToken();
+                        model.ShortUrl = ShortUrl(model.Token);
+                        
                         if (User.Identity.IsAuthenticated) model.UserId = User.Identity.GetUserId();
                         model.Clicks = 0;
                         model.MaxClicks = 0;
@@ -215,13 +246,13 @@ namespace UrlShortenerMVC.Controllers
                         db.Urls.Add(model);
                         db.SaveChanges();
 
-                        dbContextTransaction.Commit();
+                        dbContextTransaction.Commit();                        
                         return View(new UrlViewModel { LongUrl = model.LongUrl, ShortUrl = model.ShortUrl, CampaignId = model.CampaignId });
                     }
                     catch (Exception ex)
                     {
                         dbContextTransaction.Rollback();
-                        return View(model);
+                        return RedirectToAction("Create", new { campaignId = model.CampaignId, error = "Error" });
                     }
                 }                
             }
