@@ -18,6 +18,7 @@ namespace UrlShortenerMVC.Models
         public AspNetUser()
         {
             this.Urls = new HashSet<Url>();
+            this.Campaigns = new HashSet<Campaign>();
         }
     
         public string Id { get; set; }
@@ -35,5 +36,7 @@ namespace UrlShortenerMVC.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Url> Urls { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Campaign> Campaigns { get; set; }
     }
 }

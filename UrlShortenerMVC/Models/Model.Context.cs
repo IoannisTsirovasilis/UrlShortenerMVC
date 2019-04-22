@@ -28,6 +28,6 @@ namespace UrlShortenerMVC.Models
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<ClientIPAddress> ClientIPAddresses { get; set; }
         public virtual DbSet<Url> Urls { get; set; }
-        public virtual DbSet<UrlsIPAddress> UrlsIPAddresses { get; set; }
+        public virtual DbSet<Campaign> Campaigns { get; set; }
     }
 }

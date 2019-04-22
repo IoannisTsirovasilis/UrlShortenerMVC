@@ -12,18 +12,22 @@ namespace UrlShortenerMVC.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ClientIPAddress
+    public partial class Campaign
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ClientIPAddress()
+        public Campaign()
         {
             this.Urls = new HashSet<Url>();
         }
     
         public string Id { get; set; }
-        public string IPAddress { get; set; }
+        public string Name { get; set; }
+        public System.DateTime StartDate { get; set; }
+        public System.DateTime EndDate { get; set; }
         public System.DateTime CreatedAt { get; set; }
+        public string CreatedBy { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Url> Urls { get; set; }
     }

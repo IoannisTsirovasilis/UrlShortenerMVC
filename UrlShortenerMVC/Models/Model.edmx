@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Models.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Models.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetUsers">
           <Key>
             <PropertyRef Name="Id" />
@@ -21,6 +21,25 @@
           <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Campaigns">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+          <Property Name="EndDate" Type="date" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CampaignsUrls">
+          <Key>
+            <PropertyRef Name="CampaignId" />
+            <PropertyRef Name="UrlId" />
+          </Key>
+          <Property Name="CampaignId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UrlId" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="ClientIPAddresses">
           <Key>
@@ -47,15 +66,42 @@
           <Property Name="HasExpired" Type="bit" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityType Name="UrlsIPAddresses">
-          <Key>
-            <PropertyRef Name="UrlId" />
-            <PropertyRef Name="IPAddressId" />
-          </Key>
-          <Property Name="UrlId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="IPAddressId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="ClickedAt" Type="datetime" Nullable="false" />
-        </EntityType>
+        <Association Name="FK_Campaigns_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Campaigns" Type="Self.Campaigns" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Campaigns">
+              <PropertyRef Name="CreatedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CampaignsUrls_Campaigns">
+          <End Role="Campaigns" Type="Self.Campaigns" Multiplicity="1" />
+          <End Role="CampaignsUrls" Type="Self.CampaignsUrls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Campaigns">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CampaignsUrls">
+              <PropertyRef Name="CampaignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CampaignsUrls_Urls">
+          <End Role="Urls" Type="Self.Urls" Multiplicity="1" />
+          <End Role="CampaignsUrls" Type="Self.CampaignsUrls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urls">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CampaignsUrls">
+              <PropertyRef Name="UrlId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Urls_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="Urls" Type="Self.Urls" Multiplicity="*" />
@@ -80,35 +126,24 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UrlsIPAddresses_ClientIPAddresses">
-          <End Role="ClientIPAddresses" Type="Self.ClientIPAddresses" Multiplicity="1" />
-          <End Role="UrlsIPAddresses" Type="Self.UrlsIPAddresses" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ClientIPAddresses">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UrlsIPAddresses">
-              <PropertyRef Name="IPAddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UrlsIPAddresses_Urls">
-          <End Role="Urls" Type="Self.Urls" Multiplicity="1" />
-          <End Role="UrlsIPAddresses" Type="Self.UrlsIPAddresses" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Urls">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UrlsIPAddresses">
-              <PropertyRef Name="UrlId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="ModelsStoreContainer">
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Campaigns" EntityType="Self.Campaigns" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CampaignsUrls" EntityType="Self.CampaignsUrls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientIPAddresses" EntityType="Self.ClientIPAddresses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Urls" EntityType="Self.Urls" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UrlsIPAddresses" EntityType="Self.UrlsIPAddresses" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Campaigns_AspNetUsers" Association="Self.FK_Campaigns_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Campaigns" EntitySet="Campaigns" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CampaignsUrls_Campaigns" Association="Self.FK_CampaignsUrls_Campaigns">
+            <End Role="Campaigns" EntitySet="Campaigns" />
+            <End Role="CampaignsUrls" EntitySet="CampaignsUrls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CampaignsUrls_Urls" Association="Self.FK_CampaignsUrls_Urls">
+            <End Role="Urls" EntitySet="Urls" />
+            <End Role="CampaignsUrls" EntitySet="CampaignsUrls" />
+          </AssociationSet>
           <AssociationSet Name="FK_Urls_AspNetUsers" Association="Self.FK_Urls_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Urls" EntitySet="Urls" />
@@ -117,17 +152,8 @@
             <End Role="ClientIPAddresses" EntitySet="ClientIPAddresses" />
             <End Role="Urls" EntitySet="Urls" />
           </AssociationSet>
-          <AssociationSet Name="FK_UrlsIPAddresses_ClientIPAddresses" Association="Self.FK_UrlsIPAddresses_ClientIPAddresses">
-            <End Role="ClientIPAddresses" EntitySet="ClientIPAddresses" />
-            <End Role="UrlsIPAddresses" EntitySet="UrlsIPAddresses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UrlsIPAddresses_Urls" Association="Self.FK_UrlsIPAddresses_Urls">
-            <End Role="Urls" EntitySet="Urls" />
-            <End Role="UrlsIPAddresses" EntitySet="UrlsIPAddresses" />
-          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Models" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -148,6 +174,7 @@
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
           <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Urls" Relationship="Self.FK_Urls_AspNetUsers" FromRole="AspNetUsers" ToRole="Urls" />
+          <NavigationProperty Name="Campaigns" Relationship="Models.FK_Campaigns_AspNetUsers" FromRole="AspNetUser" ToRole="Campaign" />
         </EntityType>
         <EntityType Name="ClientIPAddress">
           <Key>
@@ -157,7 +184,6 @@
           <Property Name="IPAddress" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Urls" Relationship="Self.FK_Urls_ClientIPAddresses" FromRole="ClientIPAddresses" ToRole="Urls" />
-          <NavigationProperty Name="UrlsIPAddresses" Relationship="Self.FK_UrlsIPAddresses_ClientIPAddresses" FromRole="ClientIPAddresses" ToRole="UrlsIPAddresses" />
         </EntityType>
         <EntityType Name="Url">
           <Key>
@@ -177,18 +203,7 @@
           <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK_Urls_AspNetUsers" FromRole="Urls" ToRole="AspNetUsers" />
           <NavigationProperty Name="ClientIPAddress" Relationship="Self.FK_Urls_ClientIPAddresses" FromRole="Urls" ToRole="ClientIPAddresses" />
-          <NavigationProperty Name="UrlsIPAddresses" Relationship="Self.FK_UrlsIPAddresses_Urls" FromRole="Urls" ToRole="UrlsIPAddresses" />
-        </EntityType>
-        <EntityType Name="UrlsIPAddress">
-          <Key>
-            <PropertyRef Name="UrlId" />
-            <PropertyRef Name="IPAddressId" />
-          </Key>
-          <Property Name="UrlId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IPAddressId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ClickedAt" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="ClientIPAddress" Relationship="Self.FK_UrlsIPAddresses_ClientIPAddresses" FromRole="UrlsIPAddresses" ToRole="ClientIPAddresses" />
-          <NavigationProperty Name="Url" Relationship="Self.FK_UrlsIPAddresses_Urls" FromRole="UrlsIPAddresses" ToRole="Urls" />
+          <NavigationProperty Name="Campaigns" Relationship="Models.CampaignsUrls" FromRole="Url" ToRole="Campaign" />
         </EntityType>
         <Association Name="FK_Urls_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="0..1" />
@@ -214,35 +229,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UrlsIPAddresses_ClientIPAddresses">
-          <End Role="ClientIPAddresses" Type="Self.ClientIPAddress" Multiplicity="1" />
-          <End Role="UrlsIPAddresses" Type="Self.UrlsIPAddress" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ClientIPAddresses">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UrlsIPAddresses">
-              <PropertyRef Name="IPAddressId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UrlsIPAddresses_Urls">
-          <End Role="Urls" Type="Self.Url" Multiplicity="1" />
-          <End Role="UrlsIPAddresses" Type="Self.UrlsIPAddress" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Urls">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UrlsIPAddresses">
-              <PropertyRef Name="UrlId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
           <EntitySet Name="ClientIPAddresses" EntityType="Self.ClientIPAddress" />
           <EntitySet Name="Urls" EntityType="Self.Url" />
-          <EntitySet Name="UrlsIPAddresses" EntityType="Self.UrlsIPAddress" />
           <AssociationSet Name="FK_Urls_AspNetUsers" Association="Self.FK_Urls_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Urls" EntitySet="Urls" />
@@ -251,15 +241,45 @@
             <End Role="ClientIPAddresses" EntitySet="ClientIPAddresses" />
             <End Role="Urls" EntitySet="Urls" />
           </AssociationSet>
-          <AssociationSet Name="FK_UrlsIPAddresses_ClientIPAddresses" Association="Self.FK_UrlsIPAddresses_ClientIPAddresses">
-            <End Role="ClientIPAddresses" EntitySet="ClientIPAddresses" />
-            <End Role="UrlsIPAddresses" EntitySet="UrlsIPAddresses" />
+          <EntitySet Name="Campaigns" EntityType="Models.Campaign" />
+          <AssociationSet Name="FK_Campaigns_AspNetUsers" Association="Models.FK_Campaigns_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Campaign" EntitySet="Campaigns" />
           </AssociationSet>
-          <AssociationSet Name="FK_UrlsIPAddresses_Urls" Association="Self.FK_UrlsIPAddresses_Urls">
-            <End Role="Urls" EntitySet="Urls" />
-            <End Role="UrlsIPAddresses" EntitySet="UrlsIPAddresses" />
+          <AssociationSet Name="CampaignsUrls" Association="Models.CampaignsUrls">
+            <End Role="Campaign" EntitySet="Campaigns" />
+            <End Role="Url" EntitySet="Urls" />
           </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Campaign">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="Models.FK_Campaigns_AspNetUsers" FromRole="Campaign" ToRole="AspNetUser" />
+          <NavigationProperty Name="Urls" Relationship="Models.CampaignsUrls" FromRole="Campaign" ToRole="Url" />
+        </EntityType>
+        <Association Name="FK_Campaigns_AspNetUsers">
+          <End Type="Models.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Models.Campaign" Role="Campaign" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Campaign">
+              <PropertyRef Name="CreatedBy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="CampaignsUrls">
+          <End Type="Models.Campaign" Role="Campaign" Multiplicity="*" />
+          <End Type="Models.Url" Role="Url" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -311,15 +331,26 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UrlsIPAddresses">
-            <EntityTypeMapping TypeName="Models.UrlsIPAddress">
-              <MappingFragment StoreEntitySet="UrlsIPAddresses">
-                <ScalarProperty Name="UrlId" ColumnName="UrlId" />
-                <ScalarProperty Name="IPAddressId" ColumnName="IPAddressId" />
-                <ScalarProperty Name="ClickedAt" ColumnName="ClickedAt" />
+          <EntitySetMapping Name="Campaigns">
+            <EntityTypeMapping TypeName="Models.Campaign">
+              <MappingFragment StoreEntitySet="Campaigns">
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <AssociationSetMapping Name="CampaignsUrls" TypeName="Models.CampaignsUrls" StoreEntitySet="CampaignsUrls">
+            <EndProperty Name="Url">
+              <ScalarProperty Name="Id" ColumnName="UrlId" />
+            </EndProperty>
+            <EndProperty Name="Campaign">
+              <ScalarProperty Name="Id" ColumnName="CampaignId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

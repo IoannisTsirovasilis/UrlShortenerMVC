@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace UrlShortenerMVC.Models
+namespace UrlShortenerMVC.ViewModels
 {
     public class ExternalLoginConfirmationViewModel
     {
