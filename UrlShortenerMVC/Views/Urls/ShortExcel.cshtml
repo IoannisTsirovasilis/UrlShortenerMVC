@@ -1,6 +1,5 @@
 ﻿@model UrlShortenerMVC.ViewModels.ShortExcelViewModel
 
-@Html.Hidden(ViewBag.Toast as string)
 @using (Html.BeginForm("ShortExcel", "Urls", FormMethod.Post, new { @class = "form-horizontal container mt-3", enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
@@ -17,10 +16,15 @@
         </div>
     </div>
     @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
-    <div class="text-danger">@ViewBag.Error</div>
+    <div class="text-danger">@Model.Message</div>
 }
-
-<div class="toast" style="position: absolute; top: 40px; right: 40px; z-index:1000">
+@if (!string.IsNullOrWhiteSpace(Model.CampaignId))
+{
+    <div>
+        @Html.ActionLink("Back to Options", "AddLinks", "Campaigns", new { campaignId = Model.CampaignId }, null)
+    </div>
+}
+@*<div id="toast" style="position: absolute; top: 40px; right: 40px; z-index:1000">
     <div class="toast-header bg-pale-red text-pale-red">
         <strong class="mr-auto">Oops!</strong>
         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
@@ -30,7 +34,7 @@
     <div class="toast-body bg-pale-red text-pale-red">
         Something went wrong. We are sorry for the inconvenience...
     </div>
-</div>
+</div>*@
 
 
 @section Scripts {

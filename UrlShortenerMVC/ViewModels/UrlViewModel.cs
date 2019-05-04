@@ -1,5 +1,11 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Data.OleDb;
+using System.IO;
+using System.Linq;
+using System.Web;
 using UrlShortenerMVC.Models;
 
 namespace UrlShortenerMVC.ViewModels
@@ -7,6 +13,7 @@ namespace UrlShortenerMVC.ViewModels
     public class UrlViewModel
     {
         private Entities db = new Entities();
+        private static readonly string base62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         public string Id { get; set; }
 
@@ -43,6 +50,30 @@ namespace UrlShortenerMVC.ViewModels
         public string CampaignId { get; set; }
 
         public Campaign Campaign { get; set; }
+
+        public static int GenerateLongToShortToken(Entities db)
+        {
+            var r = new Random();
+            int token;
+
+            do
+            {
+                token = r.Next(0, int.MaxValue);
+            } while (db.Urls.Count(u => u.Token == token) > 0);
+
+            return token;
+        }
+
+        public static string GenerateShortUrl(int token)
+        {
+            var shortUrl = "http://85.73.244.104:6677/";
+            do
+            {
+                shortUrl += base62[token % 62];
+                token /= base62.Length;
+            } while (token > 0);
+            return shortUrl;
+        }
 
         public static implicit operator Url(UrlViewModel model)
         {

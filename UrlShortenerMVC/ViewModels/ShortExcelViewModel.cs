@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UrlShortenerMVC.ViewModels
 {
@@ -13,5 +9,7 @@ namespace UrlShortenerMVC.ViewModels
         public string File { get; set; }
 
         public string CampaignId { get; set; }
+
+        public string Message { get; set; }
     }
 }
