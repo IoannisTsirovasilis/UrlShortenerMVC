@@ -450,6 +450,8 @@
     <Content Include="Views\Campaigns\Edit.cshtml" />
     <Content Include="Views\Campaigns\Index.cshtml" />
     <Content Include="Views\Campaigns\AddLinks.cshtml" />
+    <Content Include="Views\Dashboard\_UrlsPartial.cshtml" />
+    <Content Include="Views\Dashboard\_CampaignsPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<UrlShortenerMVC.ViewModels.CampaignViewModel>
+
+@{ 
+    Layout = null;
+}
+
+<table class="table table-sm table-striped table-bordered">
+    <tr>
+        <th>
+            Campaign
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @item.StartDate.ToShortDateString()
+            </td>
+            <td>
+                @item.EndDate.ToShortDateString()
+            </td>
+        </tr>
+    }
+
+</table>
