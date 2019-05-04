@@ -129,19 +129,6 @@ namespace UrlShortenerMVC.Controllers
                                             model.Token = token;
                                             model.ShortUrl = shortUrl;
                                             model.LongUrl = ds.Tables[0].Rows[i][0].ToString();
-                                            var userIP = db.ClientIPAddresses.Where(x => x.IPAddress == Request.UserHostAddress).ToList();
-                                            if (userIP.Count == 0)
-                                            {
-                                                var ipAddress = new ClientIPAddress();
-                                                do
-                                                {
-                                                    ipAddress.Id = Guid.NewGuid().ToString();
-                                                } while (db.ClientIPAddresses.Find(ipAddress.Id) != null);
-                                                ipAddress.IPAddress = Request.UserHostAddress;
-                                                ipAddress.CreatedAt = DateTime.Now;
-                                                db.ClientIPAddresses.Add(ipAddress);
-                                                db.SaveChanges();
-                                            }
                                             if (User.Identity.IsAuthenticated) model.UserId = User.Identity.GetUserId();
                                             model.Clicks = 0;
                                             model.MaxClicks = 0;

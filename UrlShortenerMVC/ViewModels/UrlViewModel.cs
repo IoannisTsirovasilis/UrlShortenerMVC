@@ -22,8 +22,7 @@ namespace UrlShortenerMVC.ViewModels
         public AspNetUser User { get; set; }
         public string UserId { get; set; }
 
-        public ClientIPAddress IPAddress { get; set; }
-        public string IPAddressId { get; set; }
+        public string IPAddress { get; set; }
 
         public int Token { get; set; }
         public int Clicks { get; set; }
@@ -53,7 +52,7 @@ namespace UrlShortenerMVC.ViewModels
                 LongUrl = model.LongUrl,
                 ShortUrl = model.ShortUrl,
                 UserId = model.UserId,
-                IPAddressId = model.IPAddressId,
+                IPAddress = model.IPAddress,
                 Token = model.Token,
                 Clicks = model.Clicks,
                 MaxClicks = model.MaxClicks,
@@ -74,8 +73,7 @@ namespace UrlShortenerMVC.ViewModels
                 ShortUrl = model.ShortUrl,
                 UserId = model.UserId,
                 User = model.AspNetUser,
-                IPAddressId = model.IPAddressId,
-                IPAddress = model.ClientIPAddress,
+                IPAddress = model.IPAddress,
                 Token = model.Token,
                 Clicks = model.Clicks,
                 MaxClicks = model.MaxClicks,

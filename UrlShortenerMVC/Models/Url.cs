@@ -19,7 +19,6 @@ namespace UrlShortenerMVC.Models
         public string ShortUrl { get; set; }
         public string UserId { get; set; }
         public string CampaignId { get; set; }
-        public string IPAddressId { get; set; }
         public int Token { get; set; }
         public int Clicks { get; set; }
         public int MaxClicks { get; set; }
@@ -27,9 +26,9 @@ namespace UrlShortenerMVC.Models
         public Nullable<System.DateTime> ExpiresAt { get; set; }
         public bool HasExpired { get; set; }
         public System.DateTime CreatedAt { get; set; }
+        public string IPAddress { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual Campaign Campaign { get; set; }
-        public virtual ClientIPAddress ClientIPAddress { get; set; }
     }
 }

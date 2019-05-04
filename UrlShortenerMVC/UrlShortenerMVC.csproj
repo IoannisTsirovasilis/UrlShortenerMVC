@@ -180,7 +180,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CampaignsController.cs" />
-    <Compile Include="Controllers\ClientIPAddressesController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -193,9 +192,6 @@
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Campaign.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ClientIPAddress.cs">
       <DependentUpon>Model.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
@@ -222,7 +218,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\DashboardViewModel.cs" />
-    <Compile Include="ViewModels\ClientIPAddressViewModel.cs" />
     <Compile Include="ViewModels\ShortExcelViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\UrlViewModel.cs" />
@@ -443,11 +438,6 @@
     <Content Include="Views\Urls\Details.cshtml" />
     <Content Include="Views\Urls\Edit.cshtml" />
     <Content Include="Views\Urls\Index.cshtml" />
-    <Content Include="Views\ClientIPAddresses\Create.cshtml" />
-    <Content Include="Views\ClientIPAddresses\Delete.cshtml" />
-    <Content Include="Views\ClientIPAddresses\Details.cshtml" />
-    <Content Include="Views\ClientIPAddresses\Edit.cshtml" />
-    <Content Include="Views\ClientIPAddresses\Index.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Shared\_Navbar.cshtml" />
     <Content Include="Views\Shared\_Footer.cshtml" />
@@ -462,7 +452,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="TempFiles\" />
     <Folder Include="Views\Shared\SideNavbarPartialViews\" />
   </ItemGroup>
   <ItemGroup>
