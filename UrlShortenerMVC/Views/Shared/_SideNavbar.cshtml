@@ -26,7 +26,7 @@
                 @Html.ActionLink("Campaigns", "Index", "Campaigns", null, new { @class = "btn btn-dark text-left border-bottom" })
                 @Html.ActionLink("Links", "Index", "Urls", null, new { @class = "btn btn-dark text-left border-bottom" })
                 @Html.ActionLink("Short Excel", "ShortExcel", "Urls", null, new { @class = "btn btn-dark text-left border-bottom" })
-                <a class="btn btn-dark text-left border-bottom" href="/">Settings</a>
+                @Html.ActionLink("Settings", "Index", "Manage", null, new { @class = "btn btn-dark text-left border-bottom" })
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "w-100" }))
                 {
                     @Html.AntiForgeryToken()
