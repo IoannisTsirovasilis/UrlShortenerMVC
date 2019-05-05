@@ -70,7 +70,7 @@ namespace UrlShortenerMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public ActionResult Create([Bind(Include = "LongUrl,CampaignId")] UrlViewModel model)
+        public ActionResult Create(UrlViewModel model)
         {
             ViewBag.Toast = "NoError";
             if (ModelState.IsValid)
@@ -84,33 +84,48 @@ namespace UrlShortenerMVC.Controllers
                             model.Id = Guid.NewGuid().ToString();
                         } while (db.Urls.Find(model.Id) != null);
 
-                        var user = db.AspNetUsers.Find(User.Identity.GetUserId());
-                        if (user == null)
+                        Url url;
+                        if (Request.IsAuthenticated)
                         {
-                            return RedirectToAction("Create", new { campaignId = model.CampaignId, error = "Error" });
+                            var user = db.AspNetUsers.Find(User.Identity.GetUserId());
+                            if (user == null)
+                            {
+                                return RedirectToAction("Create", new { campaignId = model.CampaignId, error = "Error" });
+                            }
+                            url = db.Urls.FirstOrDefault(x => x.LongUrl == model.LongUrl && x.UserId == user.Id && x.CampaignId == model.CampaignId);
+                            if (url != null)
+                            {
+                                return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl, CampaignId = url.CampaignId });
+                            }
+                            model.UserId = user.Id;
+                            var campaign = db.Campaigns.Find(model.CampaignId);
+                            if (campaign != null && campaign.CreatedBy == user.Id)
+                            {
+                                model.CampaignId = campaign.Id;
+                            }
                         }
+                        else
+                        {
+                            url = db.Urls.FirstOrDefault(x => x.LongUrl == model.LongUrl && x.IPAddress == Request.UserHostAddress);
+                            if (url != null)
+                            {
+                                return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl });
+                            }
+                        }
+                        
                         // If url has already been shortened by this user, return it
-                        var url = db.Urls.Where(x => x.LongUrl == model.LongUrl && x.UserId == user.Id && x.CampaignId == model.CampaignId).ToList();
-                        if (url.Count > 0)
-                        {
-                            return View(new UrlViewModel { LongUrl = url.First().LongUrl, ShortUrl = url.First().ShortUrl, CampaignId = url.First().CampaignId });
-                        }
+                        
 
                         model.Token = UrlViewModel.GenerateLongToShortToken(db);
                         model.ShortUrl = UrlViewModel.GenerateShortUrl(model.Token);
                         
-                        if (User.Identity.IsAuthenticated) model.UserId = User.Identity.GetUserId();
                         model.Clicks = 0;
                         model.MaxClicks = 0;
                         model.Expires = false;
                         model.HasExpired = false;
                         model.IPAddress = Request.UserHostAddress;
                         model.CreatedAt = DateTime.Now;
-                        var campaign = db.Campaigns.Find(model.CampaignId);
-                        if (campaign != null && campaign.CreatedBy == User.Identity.GetUserId())
-                        {
-                            model.CampaignId = campaign.Id;
-                        }
+                       
                         db.Urls.Add(model);
                         db.SaveChanges();
 
@@ -120,7 +135,7 @@ namespace UrlShortenerMVC.Controllers
                     catch (Exception ex)
                     {
                         dbContextTransaction.Rollback();
-                        return RedirectToAction("Create", new { campaignId = model.CampaignId, error = "Error" });
+                        return RedirectToAction("Create", new { error = "Error" });
                     }
                 }                
             }
