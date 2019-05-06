@@ -203,7 +203,6 @@
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="ViewModels\CampaignViewModel.cs" />
-    <Compile Include="ViewModels\ChartViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Models\Model.Context.cs">
       <AutoGen>True</AutoGen>

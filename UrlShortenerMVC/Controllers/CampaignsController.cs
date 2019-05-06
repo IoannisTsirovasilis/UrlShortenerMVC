@@ -39,12 +39,12 @@ namespace UrlShortenerMVC.Controllers
             {
                 return RedirectToAction("Index", new { error = "Error" });
             }
-            Campaign campaign = db.Campaigns.Find(id);
+            CampaignViewModel campaign = db.Campaigns.Find(id);
             if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
             {
                 return RedirectToAction("Index", new { error = "Error" });
             }
-            return View((CampaignViewModel) campaign);
+            return View(campaign);
         }
 
         // GET: Campaigns/Create
@@ -58,26 +58,35 @@ namespace UrlShortenerMVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Name,StartDate,EndDate")] CampaignViewModel campaign)
+        public ActionResult Create(CampaignViewModel campaign)
         {
-            if (campaign.StartDate > campaign.EndDate)
-            {
-                ModelState.AddModelError("StartDateGreaterThanEndDate", "Starting Date cannot be greater than Ending Date.");
-                return View(campaign);
-            }
-            if (ModelState.IsValid)
-            {
-                do
+            try
+            {                
+                if (ModelState.IsValid)
                 {
-                    campaign.Id = Guid.NewGuid().ToString();
-                } while (db.Campaigns.Find(campaign.Id) != null);
-                campaign.CreatedAt = DateTime.Now;
-                campaign.CreatedBy = User.Identity.GetUserId();
-                db.Campaigns.Add(campaign);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                    campaign.StartDate = DateTime.ParseExact(campaign.StartDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    campaign.EndDate = DateTime.ParseExact(campaign.EndDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    if (campaign.StartDate > campaign.EndDate)
+                    {
+                        ModelState.AddModelError("StartDateGreaterThanEndDate", "Starting Date cannot be greater than Ending Date.");
+                        return View(campaign);
+                    }
+                    do
+                    {
+                        campaign.Id = Guid.NewGuid().ToString();
+                    } while (db.Campaigns.Find(campaign.Id) != null);
+                    campaign.CreatedAt = DateTime.Now;
+                    campaign.CreatedBy = User.Identity.GetUserId();
+                    db.Campaigns.Add(campaign);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                
             }
-
+            catch (FormatException)
+            {
+                ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
+            }
             return View(campaign);
         }
 
@@ -101,27 +110,36 @@ namespace UrlShortenerMVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,StartDate,EndDate")] CampaignViewModel model)
+        public ActionResult Edit(CampaignViewModel model)
         {
-            if (model.StartDate > model.EndDate)
+            try
             {
-                ModelState.AddModelError("StartDateGreaterThanEndDate", "Starting Date cannot be greater than Ending Date.");
-                return View(model);
-            }            
-            if (ModelState.IsValid)
-            {
-                var campaign = db.Campaigns.Find(model.Id);
-                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                if (ModelState.IsValid)
                 {
-                    return RedirectToAction("Index", new { error = "Error" });
+                    model.StartDate = DateTime.ParseExact(model.StartDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    model.EndDate = DateTime.ParseExact(model.EndDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                    if (model.StartDate > model.EndDate)
+                    {
+                        ModelState.AddModelError("StartDateGreaterThanEndDate", "Starting Date cannot be greater than Ending Date.");
+                        return View(model);
+                    }
+                    var campaign = db.Campaigns.Find(model.Id);
+                    if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                    {
+                        return RedirectToAction("Index", new { error = "Error" });
+                    }
+                    campaign.Name = model.Name;
+                    campaign.StartDate = model.StartDate;
+                    campaign.EndDate = model.EndDate;
+                    db.Entry(campaign).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
                 }
-                campaign.Name = model.Name;
-                campaign.StartDate = model.StartDate;
-                campaign.EndDate = model.EndDate;
-                db.Entry(campaign).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
             }
+            catch (FormatException)
+            {
+                ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
+            }                          
             return View(model);
         }
 
@@ -137,7 +155,7 @@ namespace UrlShortenerMVC.Controllers
             {
                 return RedirectToAction("Index", new { error = "Error" });
             }
-            return View(campaign);
+            return View((CampaignViewModel) campaign);
         }
 
         // POST: Campaigns/Delete/5

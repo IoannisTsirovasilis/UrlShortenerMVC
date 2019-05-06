@@ -1,8 +1,4 @@
-﻿@model UrlShortenerMVC.Models.Campaign
-
-@{
-    ViewBag.Title = "Delete";
-}
+﻿@model UrlShortenerMVC.ViewModels.CampaignViewModel
 
 <h2>Delete Campaign</h2>
 
@@ -18,7 +14,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.StartDate)
+            @Html.DisplayNameFor(model => model.StartDateString)
         </dt>
 
         <dd>
@@ -26,11 +22,22 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.EndDate)
+            @Html.DisplayNameFor(model => model.EndDateString)
         </dt>
 
         <dd>
             @Model.EndDate.ToShortDateString()
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Urls)
+        </dt>
+
+        <dd>
+            @foreach (var u in Model.GetUrls())
+            {
+                @(u.LongUrl + " - " + u.ShortUrl) <br />
+            }
         </dd>
 
     </dl>

@@ -1,5 +1,5 @@
 ﻿@model UrlShortenerMVC.ViewModels.CampaignViewModel
-
+@using UrlShortenerMVC.Models
 <h2>Campaign Details</h2>
 
 <div>
@@ -13,19 +13,30 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.StartDate)
+            @Html.DisplayNameFor(model => model.StartDateString)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.StartDate)
+            @Html.DisplayFor(model => model.StartDateString)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.EndDate)
+            @Html.DisplayNameFor(model => model.EndDateString)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.EndDate)
+            @Html.DisplayFor(model => model.EndDateString)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Urls)
+        </dt>
+
+        <dd>
+            @foreach (var u in Model.GetUrls())
+            {
+                @(u.LongUrl + " - " + u.ShortUrl) <br />
+            }
         </dd>
     </dl>
 </div>
