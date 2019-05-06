@@ -37,6 +37,9 @@ namespace UrlShortenerMVC
             bundles.Add(new ScriptBundle("~/bundles/toast-init").Include(
                          "~/Scripts/Custom/toast-init.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/Chart").Include(
+                         "~/Scripts/Chart.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
