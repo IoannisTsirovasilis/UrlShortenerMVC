@@ -9,6 +9,7 @@ using UrlShortenerMVC.ViewModels;
 
 namespace UrlShortenerMVC.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
         private Entities db = new Entities();
