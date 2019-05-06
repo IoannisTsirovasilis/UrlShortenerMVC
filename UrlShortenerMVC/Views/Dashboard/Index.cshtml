@@ -1,17 +1,28 @@
 ﻿@model UrlShortenerMVC.ViewModels.DashboardViewModel
+@using Chart.Mvc.Extensions;
+@using Chart.Mvc.ComplexChart;
+@Scripts.Render("~/bundles/Chart")
 
-<div class="jumbotron jumbotron-fluid">
+<div class="jumbotron jumbotron-fluid p-0">
     <div class="container">
-        <h1 class="display-4">Fluid jumbotron</h1>
-        <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+        <canvas id="barChart" class="w-100 h-100"></canvas>
+        @Html.CreateChart("barChart", ViewBag.BarChart as BarChart)
     </div>
+</div>
+<div class="row col mb-2">
+    @using (Html.BeginForm("Index", "Dashboard", FormMethod.Get))
+    {
+        @Html.DropDownList("CampaignId", ViewBag.CampaignId as SelectList, "Select Campaign", new { @class = "form-control", onchange = "this.form.submit()" })
+    }
 </div>
 <div class="row">
     <div class="col-12 col-md">
-        @{Html.RenderAction("UrlsPartial");}
+        @{Html.RenderAction("UrlsPartial", new { campaignId = ViewBag.Campaign as string });}
     </div>
     <div class="col-12 col-md">
         @{Html.RenderAction("CampaignsPartial");}
     </div>
 
 </div>
+
+

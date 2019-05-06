@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<UrlShortenerMVC.ViewModels.CampaignViewModel>
 
-@{ 
+@{
     Layout = null;
 }
 
@@ -15,13 +15,16 @@
         <th>
             @Html.DisplayNameFor(model => model.EndDate)
         </th>
+        <th>
+            # Links
+        </th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.ActionLink(item.Name, "Details", "Campaigns", new { id = item.Id }, new { data_toggle = "tooltip", title = "Details" })
             </td>
             <td>
                 @item.StartDate.ToShortDateString()
@@ -29,7 +32,14 @@
             <td>
                 @item.EndDate.ToShortDateString()
             </td>
+            <td>
+                @item.GetUrlsCount()
+            </td>
         </tr>
     }
 
 </table>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/tooltip-init")
+}

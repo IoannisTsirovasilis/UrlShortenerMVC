@@ -13,22 +13,10 @@
             @Html.DisplayNameFor(model => model.ShortUrl)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CreatedAt)
+            @Html.DisplayNameFor(model => model.Campaign)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Clicks)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MaxClicks)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Expires)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ExpiresAt)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.HasExpired)
         </th>
     </tr>
 
@@ -42,22 +30,10 @@
                 @Html.DisplayFor(modelItem => item.ShortUrl)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
+                @Html.DisplayFor(modelItem => item.Campaign.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Clicks)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxClicks)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Expires)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExpiresAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HasExpired)
             </td>
         </tr>
     }
