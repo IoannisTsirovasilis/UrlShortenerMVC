@@ -33,6 +33,14 @@
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
+        <EntityType Name="UrlClicks">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UrlId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ClickedAt" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="Urls">
           <Key>
             <PropertyRef Name="Id" />
@@ -63,6 +71,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UrlClicks_Urls">
+          <End Role="Urls" Type="Self.Urls" Multiplicity="1" />
+          <End Role="UrlClicks" Type="Self.UrlClicks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urls">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UrlClicks">
+              <PropertyRef Name="UrlId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Urls_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
           <End Role="Urls" Type="Self.Urls" Multiplicity="*" />
@@ -90,10 +110,15 @@
         <EntityContainer Name="ModelsStoreContainer">
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Campaigns" EntityType="Self.Campaigns" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UrlClicks" EntityType="Self.UrlClicks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Urls" EntityType="Self.Urls" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Campaigns_AspNetUsers" Association="Self.FK_Campaigns_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Campaigns" EntitySet="Campaigns" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UrlClicks_Urls" Association="Self.FK_UrlClicks_Urls">
+            <End Role="Urls" EntitySet="Urls" />
+            <End Role="UrlClicks" EntitySet="UrlClicks" />
           </AssociationSet>
           <AssociationSet Name="FK_Urls_AspNetUsers" Association="Self.FK_Urls_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -143,6 +168,11 @@
             <End Role="Campaign" EntitySet="Campaigns" />
             <End Role="Url" EntitySet="Urls" />
           </AssociationSet>
+          <EntitySet Name="UrlClicks" EntityType="Models.UrlClick" />
+          <AssociationSet Name="FK_UrlClicks_Urls" Association="Models.FK_UrlClicks_Urls">
+            <End Role="Url" EntitySet="Urls" />
+            <End Role="UrlClick" EntitySet="UrlClicks" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Campaign">
           <Key>
@@ -176,6 +206,7 @@
           <NavigationProperty Name="AspNetUser" Relationship="Models.FK_Urls_AspNetUsers" FromRole="Url" ToRole="AspNetUser" />
           <NavigationProperty Name="Campaign" Relationship="Models.FK_Urls_Campaigns" FromRole="Url" ToRole="Campaign" />
           <Property Name="IPAddress" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UrlClicks" Relationship="Models.FK_UrlClicks_Urls" FromRole="Url" ToRole="UrlClick" />
         </EntityType>
         <Association Name="FK_Campaigns_AspNetUsers">
           <End Type="Models.AspNetUser" Role="AspNetUser" Multiplicity="1" />
@@ -210,6 +241,27 @@
             </Principal>
             <Dependent Role="Url">
               <PropertyRef Name="CampaignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="UrlClick">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UrlId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ClickedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Url" Relationship="Models.FK_UrlClicks_Urls" FromRole="UrlClick" ToRole="Url" />
+        </EntityType>
+        <Association Name="FK_UrlClicks_Urls">
+          <End Type="Models.Url" Role="Url" Multiplicity="1" />
+          <End Type="Models.UrlClick" Role="UrlClick" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Url">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UrlClick">
+              <PropertyRef Name="UrlId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -264,6 +316,15 @@
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="ShortUrl" ColumnName="ShortUrl" />
                 <ScalarProperty Name="LongUrl" ColumnName="LongUrl" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UrlClicks">
+            <EntityTypeMapping TypeName="Models.UrlClick">
+              <MappingFragment StoreEntitySet="UrlClicks">
+                <ScalarProperty Name="ClickedAt" ColumnName="ClickedAt" />
+                <ScalarProperty Name="UrlId" ColumnName="UrlId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

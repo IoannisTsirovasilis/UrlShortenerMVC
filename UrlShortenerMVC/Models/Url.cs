@@ -14,6 +14,12 @@ namespace UrlShortenerMVC.Models
     
     public partial class Url
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Url()
+        {
+            this.UrlClicks = new HashSet<UrlClick>();
+        }
+    
         public string Id { get; set; }
         public string LongUrl { get; set; }
         public string ShortUrl { get; set; }
@@ -30,5 +36,7 @@ namespace UrlShortenerMVC.Models
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual Campaign Campaign { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UrlClick> UrlClicks { get; set; }
     }
 }

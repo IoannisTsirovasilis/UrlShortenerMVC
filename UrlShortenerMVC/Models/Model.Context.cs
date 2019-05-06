@@ -28,7 +28,6 @@ namespace UrlShortenerMVC.Models
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<Campaign> Campaigns { get; set; }
         public virtual DbSet<Url> Urls { get; set; }
-
-        public System.Data.Entity.DbSet<UrlShortenerMVC.ViewModels.CampaignViewModel> CampaignViewModels { get; set; }
+        public virtual DbSet<UrlClick> UrlClicks { get; set; }
     }
 }
