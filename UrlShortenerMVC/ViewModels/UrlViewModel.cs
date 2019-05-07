@@ -1,18 +1,13 @@
-﻿using OfficeOpenXml;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Data.OleDb;
-using System.IO;
 using System.Linq;
-using System.Web;
 using UrlShortenerMVC.Models;
 
 namespace UrlShortenerMVC.ViewModels
 {
     public class UrlViewModel
     {
-        private Entities db = new Entities();
+        private readonly Entities db = new Entities();
         private static readonly string base62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         public string Id { get; set; }
@@ -55,11 +50,10 @@ namespace UrlShortenerMVC.ViewModels
         {
             var r = new Random();
             int token;
-
             do
             {
                 token = r.Next(0, int.MaxValue);
-            } while (db.Urls.Count(u => u.Token == token) > 0);
+            } while (db.Urls.FirstOrDefault(x => x.Token == token) != null);
 
             return token;
         }

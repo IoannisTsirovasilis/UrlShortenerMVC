@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace UrlShortenerMVC
 {
@@ -42,9 +41,10 @@ namespace UrlShortenerMVC
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css",
+                      "~/Content/Site.css",
                       "~/Content/Custom/styles.css",
-                      "~/Content/bootstrap-datepicker3.standalone.css"));
+                      "~/Content/bootstrap-datepicker3.standalone.css",
+                      "~/Content/PagedList.css"));
         }
     }
 }

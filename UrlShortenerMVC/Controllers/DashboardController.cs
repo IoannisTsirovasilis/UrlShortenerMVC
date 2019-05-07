@@ -3,11 +3,11 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Data.Entity;
 using System.Web.Mvc;
 using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
+using System.Web.Configuration;
 
 namespace UrlShortenerMVC.Controllers
 {
@@ -18,77 +18,95 @@ namespace UrlShortenerMVC.Controllers
         // GET: Dashboard
         public ActionResult Index(string campaignId)
         {
-            var userId = User.Identity.GetUserId();
-            ViewBag.CampaignId = new SelectList(db.Campaigns.Where(x => x.CreatedBy == userId).OrderByDescending(x => x.CreatedAt), "Id", "Name", campaignId);
+            try
+            {
+                var userId = User.Identity.GetUserId();
+                ViewBag.CampaignId = new SelectList(db.Campaigns.Where(x => x.CreatedBy == userId).OrderByDescending(x => x.CreatedAt), "Id", "Name", campaignId);
 
-            var barChart = new BarChart();
-            string[] labels;
-            var values = new List<double>();
-            var campaign = db.Campaigns.Find(campaignId);
-            var today = DateTime.Now;
-            var last = today.AddMonths(-1);
-            
-            if (campaign == null)
-            {
-                labels = new string[(int)(DateTime.Now - DateTime.Now.AddMonths(-1)).TotalDays];
-                
-                for (var i = 0; i < labels.Length; i++)
-                {
-                    labels[i] = DateTime.Now.AddMonths(-1).AddDays(i).ToString("dd-MMM");
-                    values.Add(0);
-                }
-            }
-            else
-            {
-                labels = new string[(int)(campaign.EndDate - campaign.StartDate).TotalDays];
+                var barChart = new BarChart();
+                string[] labels;
+                var values = new List<double>();
+                var campaign = db.Campaigns.Find(campaignId);
+                var today = DateTime.Now;
+                var last = today.AddMonths(-1);
 
-                var totalClicks = db.UrlClicks.Include(x => x.Url).Where(x => x.Url.Campaign.Id == campaignId).ToList();
-                for (var i = 0; i < labels.Length; i++)
+                if (campaign == null)
                 {
-                    labels[i] = campaign.StartDate.AddDays(i).ToString("dd-MMM");
-                    values.Add(totalClicks.Where(x => x.ClickedAt.ToShortDateString() == DateTime.Now.AddDays(i).ToShortDateString()).Count()); 
+                    labels = new string[(int)(DateTime.Now - DateTime.Now.AddMonths(-1)).TotalDays];
+
+                    for (var i = 0; i < labels.Length; i++)
+                    {
+                        labels[i] = DateTime.Now.AddMonths(-1).AddDays(i).ToString("dd-MMM");
+                        values.Add(0);
+                    }
                 }
+                else
+                {
+                    labels = new string[(int)(campaign.EndDate - campaign.StartDate).TotalDays];
+
+                    var totalClicks = db.UrlClicks.Include(x => x.Url).Where(x => x.Url.Campaign.Id == campaignId).ToList();
+                    for (var i = 0; i < labels.Length; i++)
+                    {
+                        labels[i] = campaign.StartDate.AddDays(i).ToString("dd-MMM");
+                        values.Add(totalClicks.Where(x => x.ClickedAt.ToShortDateString() == DateTime.Now.AddDays(i).ToShortDateString()).Count());
+                    }
+                }
+
+                barChart.ComplexData.Labels.AddRange(labels);
+                barChart.ComplexData.Datasets = new List<ComplexDataset>
+                {
+                    new ComplexDataset
+                    {
+                        Data = values,
+                        Label = campaign?.Name ?? "",
+                        FillColor = "rgba(83,83,119,1)",
+                        StrokeColor = "rgba(83,83,119,1)",
+                        PointColor = "rgba(83,83,119,1)",
+                        PointStrokeColor = "rgba(83,83,119,1)",
+                        PointHighlightFill = "rgba(83,83,119,1)",
+                        PointHighlightStroke = "rgba(83,83,119,1)"
+                    }
+                };
+                ViewBag.BarChart = barChart;
+                ViewBag.Campaign = campaignId;
+                return View();
             }
-            
-            barChart.ComplexData.Labels.AddRange(labels);
-            barChart.ComplexData.Datasets = new List<ComplexDataset>
+            catch (Exception)
             {
-                new ComplexDataset
-                {
-                    Data = values,
-                    Label = campaign?.Name ?? "",
-                    FillColor = "rgba(83,83,119,1)",
-                    StrokeColor = "rgba(83,83,119,1)",
-                    PointColor = "rgba(83,83,119,1)",
-                    PointStrokeColor = "rgba(83,83,119,1)",
-                    PointHighlightFill = "rgba(83,83,119,1)",
-                    PointHighlightStroke = "rgba(83,83,119,1)"
-                }
-            };
-            ViewBag.BarChart = barChart;
-            ViewBag.Campaign = campaignId;
-            return View();
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
+                return View();
+            }
         }
 
         [ChildActionOnly]
         public ActionResult UrlsPartial(string campaignId)
         {
-            var userId = User.Identity.GetUserId();
+            
 
             var model = new List<UrlViewModel>();
-            if (!string.IsNullOrWhiteSpace(campaignId))
+            try
             {
-                db.Urls.Where(u => u.UserId == userId && u.CampaignId == campaignId).ToList().ForEach(delegate (Url u)
+                var userId = User.Identity.GetUserId();
+                if (!string.IsNullOrWhiteSpace(campaignId))
                 {
-                    model.Add(u);
-                });
+                    db.Urls.Where(u => u.UserId == userId && u.CampaignId == campaignId).ToList().ForEach(delegate (Url u)
+                    {
+                        model.Add(u);
+                    });
+                }
+                else
+                {
+                    db.Urls.Where(u => u.UserId == userId).ToList().ForEach(delegate (Url u)
+                    {
+                        model.Add(u);
+                    });
+                }                
             }
-            else
+            catch (Exception)
             {
-                db.Urls.Where(u => u.UserId == userId).ToList().ForEach(delegate (Url u)
-                {
-                    model.Add(u);
-                });
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
             }
             return View("_UrlsPartial", model);
         }
@@ -96,16 +114,23 @@ namespace UrlShortenerMVC.Controllers
         [ChildActionOnly]
         public ActionResult CampaignsPartial()
         {
-            var userId = User.Identity.GetUserId();
-            var campaigns = db.Campaigns.Where(x => x.CreatedBy == userId).ToList().Select(x => new CampaignViewModel
+            var model = new List<CampaignViewModel>();
+            try
             {
-                Id = x.Id,
-                Name = x.Name,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate
-            });
+                var userId = User.Identity.GetUserId();
+                db.Campaigns.Where(x => x.CreatedBy == userId).ToList().ForEach(delegate (Campaign c)
+                {
+                    model.Add(c);
+                });
 
-            return View("_CampaignsPartial", campaigns);
+                
+            }
+            catch (Exception)
+            {
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
+            }
+            return View("_CampaignsPartial", model);
         }
     }    
 }

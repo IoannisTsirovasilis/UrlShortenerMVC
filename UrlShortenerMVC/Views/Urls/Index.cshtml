@@ -1,59 +1,71 @@
-﻿@model IEnumerable<UrlShortenerMVC.ViewModels.UrlViewModel>
-
+﻿@model PagedList.IPagedList<UrlShortenerMVC.ViewModels.UrlViewModel>
+@using PagedList.Mvc;
 <h2>Links</h2>
 
-<b>
-    @Html.ActionLink("Shorten a link", "Create", null, htmlAttributes: new { @class = "text-orange" })
-</b>
+
+@using (Html.BeginForm("Index", "Urls", FormMethod.Get))
+{
+    <div class="d-flex justify-content-between mb-2">
+        @Html.ActionLink("Shorten a link", "Create", null, htmlAttributes: new { @class = "text-orange font-weight-bold" })
+
+        <div>
+            Search a short or long link: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, htmlAttributes: new { @class = "ml-2" })
+        </div>
+    </div>
+}
 <table class="table table-sm table-striped table-bordered">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.LongUrl)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().LongUrl)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ShortUrl)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ShortUrl)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Clicks)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Clicks)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.MaxClicks)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().MaxClicks)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Expires)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Expires)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ExpiresAt)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().ExpiresAt)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.HasExpired)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().HasExpired)
         </th>
     </tr>
 
     @foreach (var item in Model)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.LongUrl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShortUrl)
-        </td>
-        <td class="text-center">
-            @Html.DisplayFor(modelItem => item.Clicks)
-        </td>
-        <td class="text-center">
-            @Html.DisplayFor(modelItem => item.MaxClicks)
-        </td>
-        <td class="text-center">
-            @Html.DisplayFor(modelItem => item.Expires)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ExpiresAt)
-        </td>
-        <td class="text-center">
-            @Html.DisplayFor(modelItem => item.HasExpired)
-        </td>
-    </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LongUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShortUrl)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Clicks)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.MaxClicks)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.Expires)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpiresAt)
+            </td>
+            <td class="text-center">
+                @Html.DisplayFor(modelItem => item.HasExpired)
+            </td>
+        </tr>
     }
 </table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))

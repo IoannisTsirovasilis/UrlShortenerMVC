@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -19,15 +15,6 @@ namespace UrlShortenerMVC
         public Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            return Task.FromResult(0);
-        }
-    }
-
-    public class SmsService : IIdentityMessageService
-    {
-        public Task SendAsync(IdentityMessage message)
-        {
-            // Plug in your SMS service here to send a text message.
             return Task.FromResult(0);
         }
     }
@@ -54,7 +41,7 @@ namespace UrlShortenerMVC
             manager.PasswordValidator = new PasswordValidator
             {
                 RequiredLength = 6,
-                RequireNonLetterOrDigit = true,
+                RequireNonLetterOrDigit = false,
                 RequireDigit = true,
                 RequireLowercase = true,
                 RequireUppercase = true,
@@ -67,17 +54,8 @@ namespace UrlShortenerMVC
 
             // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
             // You can write your own provider and plug it in here.
-            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<ApplicationUser>
-            {
-                MessageFormat = "Your security code is {0}"
-            });
-            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<ApplicationUser>
-            {
-                Subject = "Security Code",
-                BodyFormat = "Your security code is {0}"
-            });
+            
             manager.EmailService = new EmailService();
-            manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {

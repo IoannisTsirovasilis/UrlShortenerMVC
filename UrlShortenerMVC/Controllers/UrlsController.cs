@@ -8,6 +8,8 @@ using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
 using Microsoft.AspNet.Identity;
 using UrlShortenerMVC.ExcelModels;
+using System.Web.Configuration;
+using PagedList;
 
 namespace UrlShortenerMVC.Controllers
 {
@@ -17,25 +19,54 @@ namespace UrlShortenerMVC.Controllers
         private Entities db = new Entities();       
 
         // GET: Urls
-        public ActionResult Index()
+        public ActionResult Index(string searchString, string currentFilter, int? page)
         {
-            var userId = User.Identity.GetUserId();
-
             var model = new List<UrlViewModel>();
-            db.Urls.Where(u => u.UserId == userId).ToList().ForEach(delegate (Url u)
+            try
             {
-                model.Add(u);
-            });
+                var userId = User.Identity.GetUserId();
+                var urls = db.Urls.Where(u => u.UserId == userId);
 
-            return View(model);
+                if (searchString != null)
+                {
+                    page = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewBag.CurrentFilter = searchString;
+
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    urls = from u in urls
+                           where u.LongUrl.ToLower().Contains(searchString.ToLower()) 
+                                 || u.ShortUrl.ToLower().Contains(searchString.ToLower())
+                           select u;
+                }
+
+                urls.OrderByDescending(x => x.CreatedAt).ToList().ForEach(delegate (Url u)
+                {
+                    model.Add(u);
+                });
+            }
+            catch (Exception)
+            {
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
+            }
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(model.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Urls/ShortExcel
-        public ActionResult ShortExcel(string campaignId, string error)
+        public ActionResult ShortExcel(string campaignId, string title, string message)
         {
             var model = new ShortExcelViewModel { CampaignId = campaignId };
-            model.Message = error;
-            
+            ViewBag.Title = title;
+            ViewBag.Message = message;
             return View(model);
         }
 
@@ -50,17 +81,17 @@ namespace UrlShortenerMVC.Controllers
                 {
                     return File(result.ExcelFileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ShortenedLinks.xlsx");
                 }                
-                return RedirectToAction("ShortExcel", new { campaignId, error = result.Message });
             }
-            return RedirectToAction("ShortExcel", new { campaignId, error = "Oops! Something went wrong. Please try again later." });
+            return RedirectToAction("ShortExcel", new { campaignId, title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
         }
 
         // GET: Urls/Create
         [AllowAnonymous]
-        public ActionResult Create(string campaignId, string error)
-        {
-            ViewBag.Toast = string.IsNullOrWhiteSpace(error) ? "NoError" : error;
+        public ActionResult Create(string campaignId, string title, string message)
+        {            
             var model = new UrlViewModel { CampaignId = campaignId };
+            ViewBag.Title = title;
+            ViewBag.Message = message;
             return View(model);
         }
 
@@ -72,7 +103,6 @@ namespace UrlShortenerMVC.Controllers
         [AllowAnonymous]
         public ActionResult Create(UrlViewModel model)
         {
-            ViewBag.Toast = "NoError";
             if (ModelState.IsValid)
             {
                 using (var dbContextTransaction = db.Database.BeginTransaction())
@@ -90,7 +120,7 @@ namespace UrlShortenerMVC.Controllers
                             var user = db.AspNetUsers.Find(User.Identity.GetUserId());
                             if (user == null)
                             {
-                                return RedirectToAction("Create", new { campaignId = model.CampaignId, error = "Error" });
+                                throw new Exception();
                             }
                             url = db.Urls.FirstOrDefault(x => x.LongUrl == model.LongUrl && x.UserId == user.Id && x.CampaignId == model.CampaignId);
                             if (url != null)
@@ -112,10 +142,6 @@ namespace UrlShortenerMVC.Controllers
                                 return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl });
                             }
                         }
-                        
-                        // If url has already been shortened by this user, return it
-                        
-
                         model.Token = UrlViewModel.GenerateLongToShortToken(db);
                         model.ShortUrl = UrlViewModel.GenerateShortUrl(model.Token);
                         
@@ -132,10 +158,10 @@ namespace UrlShortenerMVC.Controllers
                         dbContextTransaction.Commit();                        
                         return View(new UrlViewModel { LongUrl = model.LongUrl, ShortUrl = model.ShortUrl, CampaignId = model.CampaignId });
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         dbContextTransaction.Rollback();
-                        return RedirectToAction("Create", new { error = "Error" });
+                        return RedirectToAction("Create", new { campaignId = model.CampaignId, title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
                     }
                 }                
             }

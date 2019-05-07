@@ -8,21 +8,21 @@
         <div class="collapse navbar-collapse flex-column align-items-start vh-100" id="sideNavbarText">
             @Html.ActionLink("Short.me", "Create", "Urls", routeValues: null, htmlAttributes: new { @class = "navbar-brand px-5 pb-5 pt-3" })
             <div class="navbar-nav flex-column border-bottom border-top w-100">
-                @Html.ActionLink("Dashboard", "Index", "Dashboard", null, new { @class = "btn btn-dark text-left border-bottom px-5" })
+                @Html.ActionLink("Dashboard", "Index", "Dashboard", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
             </div>
-            <ul class="navbar-nav flex-column border-bottom w-100 px-1">
-                <li class="nav-link nav-item active px-5">Total Links: @Model.TotalLinks</li>
-                <li class="nav-link nav-item active px-5">Total Clicks: @Model.TotalClicks</li>
+            <ul class="navbar-nav flex-column border-bottom w-100 ">
+                <li class="nav-link nav-item active pl-4 pr-5">Total Links: @Model.TotalLinks</li>
+                <li class="nav-link nav-item active pl-4 pr-5">Total Clicks: @Model.TotalClicks</li>
             </ul>
             <div class="navbar-nav flex-column w-100">
-                @Html.ActionLink("Campaigns", "Index", "Campaigns", null, new { @class = "btn btn-dark text-left border-bottom px-5" })
-                @Html.ActionLink("Links", "Index", "Urls", null, new { @class = "btn btn-dark text-left border-bottom px-5" })
-                @Html.ActionLink("Short Excel", "ShortExcel", "Urls", null, new { @class = "btn btn-dark text-left border-bottom px-5" })
-                @Html.ActionLink("Settings", "Index", "Manage", null, new { @class = "btn btn-dark text-left border-bottom px-5" })
+                @Html.ActionLink("Campaigns", "Index", "Campaigns", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
+                @Html.ActionLink("Links", "Index", "Urls", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
+                @Html.ActionLink("Short Excel", "ShortExcel", "Urls", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
+                @Html.ActionLink("Settings", "Index", "Manage", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "w-100" }))
                 {
                     @Html.AntiForgeryToken()
-                    <a class="btn btn-dark text-left border-bottom w-100 px-5" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+                    <a class="btn btn-dark text-left border-bottom w-100 pl-4 pr-5" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
                 }
             </div>
         </div>

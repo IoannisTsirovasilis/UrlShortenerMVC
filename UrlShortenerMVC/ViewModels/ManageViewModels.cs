@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNet.Identity;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UrlShortenerMVC.ViewModels
 {

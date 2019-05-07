@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -77,21 +79,30 @@ namespace UrlShortenerMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
-            }
-            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
-            if (result.Succeeded)
-            {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                if (user != null)
+                if (!ModelState.IsValid)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    return View(model);
                 }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+                var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                    if (user != null)
+                    {
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    }
+                    return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+                }
+                AddErrors(result);
             }
-            AddErrors(result);
+            catch (Exception)
+            {
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
+                
+            }
             return View(model);
         }
 

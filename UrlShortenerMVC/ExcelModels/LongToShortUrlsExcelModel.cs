@@ -13,7 +13,6 @@ namespace UrlShortenerMVC.ExcelModels
     public class LongToShortUrlsExcelModel
     {
         public bool Succeeded { get; set; }
-        public string Message { get; set; }
         public MemoryStream ExcelFileStream { get; set; }
 
         public static LongToShortUrlsExcelModel ExportLongToShortUrlsExcelFile(HttpPostedFileBase file, Entities db, HttpContextBase httpContext,
@@ -67,15 +66,13 @@ namespace UrlShortenerMVC.ExcelModels
 
                                         if (user == null)
                                         {
-                                            model.Succeeded = false;
-                                            model.Message = "Oops! Something went wrong. Please try again later.";
+                                            throw new Exception();
                                         }
-                                        campaignId = string.IsNullOrWhiteSpace(campaignId) ? null : campaignId;
+                                        campaignId = string.IsNullOrWhiteSpace(campaignId) ? "" : campaignId;
                                         var campaign = db.Campaigns.Find(campaignId);
                                         if (campaign != null && campaign.CreatedBy != user.Id)
                                         {
-                                            model.Succeeded = false;
-                                            model.Message = "Oops! Something went wrong. Please try again later.";
+                                            throw new Exception();
                                         }
                                         var url = db.Urls.FirstOrDefault(x => x.LongUrl == tmp && x.UserId == user.Id && x.CampaignId == campaignId);
                                         if (url != null)
@@ -101,8 +98,10 @@ namespace UrlShortenerMVC.ExcelModels
                                         newUrl.HasExpired = false;
                                         newUrl.IPAddress = userIP;
                                         newUrl.CreatedAt = DateTime.Now;
-                                        if (campaign != null) newUrl.CampaignId = campaign.Id;
-
+                                        if (campaign != null)
+                                        {
+                                            newUrl.CampaignId = campaign.Id;
+                                        } 
                                         db.Urls.Add(newUrl);
                                         db.SaveChanges();
                                     }
@@ -114,16 +113,14 @@ namespace UrlShortenerMVC.ExcelModels
                     File.Delete(filePath);
                     model.Succeeded = true;
                     model.ExcelFileStream = new MemoryStream(package.GetAsByteArray());
-                    return model;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     dbContextTransaction.Rollback();
-                    model.Succeeded = false;
-                    model.Message = "Oops! Something went wrong. Please try again later.";
-                    return model;                    
+                    model.Succeeded = false;                  
                 }
             }
+            return model;
         }
     }
 }

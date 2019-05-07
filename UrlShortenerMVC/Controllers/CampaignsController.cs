@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
@@ -18,33 +17,47 @@ namespace UrlShortenerMVC.Controllers
         private Entities db = new Entities();
 
         // GET: Campaigns
-        public ActionResult Index(string error)
+        public ActionResult Index(string title, string message)
         {
-            ViewBag.Toast = string.IsNullOrWhiteSpace(error) ? "NoError" : error;
-            var userId = User.Identity.GetUserId();
-            var campaigns = db.Campaigns.Where(x => x.CreatedBy == userId).ToList().Select(x => new CampaignViewModel
+            var model = new List<CampaignViewModel>();
+            try
             {
-                Id = x.Id,
-                Name = x.Name,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate
-            });
-            return View(campaigns);
+                var userId = User.Identity.GetUserId();
+                db.Campaigns.Where(x => x.CreatedBy == userId).ToList().ForEach(delegate (Campaign c)
+                {
+                    model.Add(c);
+                });                
+                ViewBag.Title = title;
+                ViewBag.Message = message;                
+            }
+            catch (Exception)
+            {
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
+            }
+            return View(model);
         }
 
         // GET: Campaigns/Details/5
         public ActionResult Details(string id)
         {
-            if (id == null)
+            try
             {
-                return RedirectToAction("Index", new { error = "Error" });
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new Exception();
+                }
+                CampaignViewModel campaign = db.Campaigns.Find(id);
+                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                {
+                    throw new Exception();
+                }
+                return View(campaign);
             }
-            CampaignViewModel campaign = db.Campaigns.Find(id);
-            if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+            catch (Exception)
             {
-                return RedirectToAction("Index", new { error = "Error" });
+                return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
             }
-            return View(campaign);
         }
 
         // GET: Campaigns/Create
@@ -61,7 +74,7 @@ namespace UrlShortenerMVC.Controllers
         public ActionResult Create(CampaignViewModel campaign)
         {
             try
-            {                
+            {
                 if (ModelState.IsValid)
                 {
                     campaign.StartDate = DateTime.ParseExact(campaign.StartDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
@@ -81,11 +94,16 @@ namespace UrlShortenerMVC.Controllers
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
-                
+
             }
             catch (FormatException)
             {
                 ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
+            }
+            catch (Exception)
+            {
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
             }
             return View(campaign);
         }
@@ -93,16 +111,23 @@ namespace UrlShortenerMVC.Controllers
         // GET: Campaigns/Edit/5
         public ActionResult Edit(string id)
         {
-            if (id == null)
+            try
             {
-                return RedirectToAction("Index", new { error = "Error" });
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new Exception();
+                }
+                CampaignViewModel campaign = db.Campaigns.Find(id);
+                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                {
+                    throw new Exception();
+                }
+                return View(campaign);
             }
-            Campaign campaign = db.Campaigns.Find(id);
-            if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+            catch (Exception)
             {
-                return RedirectToAction("Index", new { error = "Error" });
+                return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
             }
-            return View((CampaignViewModel) campaign);
         }
 
         // POST: Campaigns/Edit/5
@@ -126,7 +151,7 @@ namespace UrlShortenerMVC.Controllers
                     var campaign = db.Campaigns.Find(model.Id);
                     if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
                     {
-                        return RedirectToAction("Index", new { error = "Error" });
+                        return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
                     }
                     campaign.Name = model.Name;
                     campaign.StartDate = model.StartDate;
@@ -139,23 +164,35 @@ namespace UrlShortenerMVC.Controllers
             catch (FormatException)
             {
                 ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
-            }                          
+            }
+            catch (Exception)
+            {
+                ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
+                ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
+            }
             return View(model);
         }
 
         // GET: Campaigns/Delete/5
         public ActionResult Delete(string id)
         {
-            if (id == null)
+            try
             {
-                return RedirectToAction("Index", new { error = "Error" });
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new Exception();
+                }
+                CampaignViewModel campaign = db.Campaigns.Find(id);
+                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                {
+                    throw new Exception();
+                }
+                return View(campaign);
             }
-            Campaign campaign = db.Campaigns.Find(id);
-            if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+            catch (Exception)
             {
-                return RedirectToAction("Index", new { error = "Error" });
+                return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
             }
-            return View((CampaignViewModel) campaign);
         }
 
         // POST: Campaigns/Delete/5
@@ -163,14 +200,25 @@ namespace UrlShortenerMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Campaign campaign = db.Campaigns.Find(id);
-            if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+            try
             {
-                return RedirectToAction("Index", new { error = "Error" });
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new Exception();
+                }
+                Campaign campaign = db.Campaigns.Find(id);
+                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                {
+                    throw new Exception();
+                }
+                db.Campaigns.Remove(campaign);
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
-            db.Campaigns.Remove(campaign);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            catch (Exception)
+            {
+                return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
+            }            
         }
 
         // GET: Urls/AddLinks/campaignId

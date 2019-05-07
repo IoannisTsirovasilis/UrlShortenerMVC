@@ -25,7 +25,7 @@ namespace UrlShortenerMVC.Controllers
                 };
                 return PartialView("_SideNavbar", model);
             }
-            return View("Error");
+            return RedirectToAction("Login", "Account");
         }
     }
 }
