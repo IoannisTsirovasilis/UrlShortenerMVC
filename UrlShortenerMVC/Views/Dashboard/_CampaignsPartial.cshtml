@@ -6,16 +6,16 @@
 
 <table class="table table-sm table-striped table-bordered">
     <tr>
-        <th>
+        <th class="text-center">
             Campaign
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.StartDate)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.EndDate)
         </th>
-        <th>
+        <th class="text-center">
             # Links
         </th>
     </tr>
@@ -23,16 +23,16 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>
+            <td class="text-center">
                 @Html.ActionLink(item.Name, "Details", "Campaigns", new { id = item.Id }, new { data_toggle = "tooltip", title = "Details" })
             </td>
-            <td>
+            <td class="text-center">
                 @item.StartDate.ToShortDateString()
             </td>
-            <td>
+            <td class="text-center">
                 @item.EndDate.ToShortDateString()
             </td>
-            <td>
+            <td class="text-center">
                 @item.GetUrlsCount()
             </td>
         </tr>
