@@ -48,7 +48,7 @@ namespace UrlShortenerMVC.Controllers
                     for (var i = 0; i < labels.Length; i++)
                     {
                         labels[i] = campaign.StartDate.AddDays(i).ToString("dd-MMM");
-                        values.Add(totalClicks.Where(x => x.ClickedAt.ToShortDateString() == DateTime.Now.AddDays(i).ToShortDateString()).Count());
+                        values.Add(totalClicks.Where(x => x.ClickedAt.Date == campaign.StartDate.AddDays(i).Date).Count());
                     }
                 }
 
