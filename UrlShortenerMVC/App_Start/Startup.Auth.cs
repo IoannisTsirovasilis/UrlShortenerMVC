@@ -1,9 +1,11 @@
 ﻿using System;
+using Hangfire;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
+using UrlShortenerMVC.Jobs;
 using UrlShortenerMVC.Models;
 
 namespace UrlShortenerMVC
@@ -34,7 +36,13 @@ namespace UrlShortenerMVC
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 },
                 CookieName = "shortmeplz"
-            });            
+            });
+
+            // Hangfire initialization
+            GlobalConfiguration.Configuration.UseSqlServerStorage("DefaultConnection");            
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+
             //app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Enables the application to temporarily store user information when they are verifying the second factor in the two-factor authentication process.

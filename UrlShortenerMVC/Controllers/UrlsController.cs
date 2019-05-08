@@ -10,6 +10,8 @@ using Microsoft.AspNet.Identity;
 using UrlShortenerMVC.ExcelModels;
 using System.Web.Configuration;
 using PagedList;
+using Hangfire;
+using UrlShortenerMVC.Jobs;
 
 namespace UrlShortenerMVC.Controllers
 {
@@ -164,15 +166,20 @@ namespace UrlShortenerMVC.Controllers
                        
                         db.Urls.Add(model);
                         db.SaveChanges();
-
-                        dbContextTransaction.Commit();                        
+                        if (model.Expires)
+                        {
+                            var lifeSpan = (model.ExpiresAt.Value.AddDays(1) - DateTime.Now).TotalSeconds;
+                            BackgroundJob.Schedule(() => JobScheduler.ExpireUrl(model.Id), TimeSpan.FromSeconds(lifeSpan));
+                        }
+                        dbContextTransaction.Commit();
+                        
                         return View(new UrlViewModel { LongUrl = model.LongUrl, ShortUrl = model.ShortUrl, CampaignId = model.CampaignId });
                     }
                     catch (FormatException)
                     {
                         ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         dbContextTransaction.Rollback();
                         return RedirectToAction("Create", new { campaignId = model.CampaignId, title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });

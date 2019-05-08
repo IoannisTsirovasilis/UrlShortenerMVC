@@ -1,10 +1,12 @@
-﻿using OfficeOpenXml;
+﻿using Hangfire;
+using OfficeOpenXml;
 using System;
 using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Web;
+using UrlShortenerMVC.Jobs;
 using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
 
@@ -102,7 +104,12 @@ namespace UrlShortenerMVC.ExcelModels
                                         if (campaign != null)
                                         {
                                             newUrl.CampaignId = campaign.Id;
-                                        } 
+                                        }
+                                        if (newUrl.Expires)
+                                        {
+                                            var lifeSpan = (newUrl.ExpiresAt.Value.AddDays(1) - DateTime.Now).TotalSeconds;
+                                            BackgroundJob.Schedule(() => JobScheduler.ExpireUrl(newUrl.Id), TimeSpan.FromSeconds(lifeSpan));
+                                        }
                                         db.Urls.Add(newUrl);
                                         db.SaveChanges();
                                     }
