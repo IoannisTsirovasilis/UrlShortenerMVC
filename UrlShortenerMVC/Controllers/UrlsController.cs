@@ -71,12 +71,12 @@ namespace UrlShortenerMVC.Controllers
         }
 
         [HttpPost]
-        public ActionResult ShortExcel(HttpPostedFileBase file, string campaignId)
+        public ActionResult ShortExcel(HttpPostedFileBase file, string campaignId, ShortExcelViewModel model)
         {
             if (file.ContentLength > 0)
             {
                 var result = LongToShortUrlsExcelModel.ExportLongToShortUrlsExcelFile(file, db, HttpContext, User.Identity.GetUserId(), 
-                                                                                      campaignId, Request.UserHostAddress);
+                                                                                      campaignId, Request.UserHostAddress, model);
                 if (result.Succeeded)
                 {
                     return File(result.ExcelFileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ShortenedLinks.xlsx");
@@ -133,6 +133,15 @@ namespace UrlShortenerMVC.Controllers
                             {
                                 model.CampaignId = campaign.Id;
                             }
+                            if (model.Expires)
+                            {
+                                if (string.IsNullOrWhiteSpace(model.ExpiresAtString))
+                                {
+                                    ModelState.AddModelError("SpecifyExpirationDate", "You must specify an expiration date if the link expires.");
+                                    return View(model);
+                                }
+                                model.ExpiresAt = DateTime.ParseExact(model.ExpiresAtString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                            }
                         }
                         else
                         {
@@ -141,13 +150,14 @@ namespace UrlShortenerMVC.Controllers
                             {
                                 return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl });
                             }
+                            model.MaxClicks = 0;
+                            model.Expires = false;
+                            
                         }
                         model.Token = UrlViewModel.GenerateLongToShortToken(db);
                         model.ShortUrl = UrlViewModel.GenerateShortUrl(model.Token);
                         
                         model.Clicks = 0;
-                        model.MaxClicks = 0;
-                        model.Expires = false;
                         model.HasExpired = false;
                         model.IPAddress = Request.UserHostAddress;
                         model.CreatedAt = DateTime.Now;
@@ -157,6 +167,10 @@ namespace UrlShortenerMVC.Controllers
 
                         dbContextTransaction.Commit();                        
                         return View(new UrlViewModel { LongUrl = model.LongUrl, ShortUrl = model.ShortUrl, CampaignId = model.CampaignId });
+                    }
+                    catch (FormatException)
+                    {
+                        ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
                     }
                     catch (Exception)
                     {

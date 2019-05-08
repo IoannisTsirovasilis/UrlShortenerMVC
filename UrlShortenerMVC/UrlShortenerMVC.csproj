@@ -278,6 +278,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Custom\styles.css" />
+    <Content Include="Content\Images\info-icon.png" />
     <Content Include="Content\Images\search-icon.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="favicon.ico" />
@@ -306,6 +307,7 @@
     <Content Include="Scripts\Custom\short-excel.js" />
     <Content Include="Scripts\Custom\toast-init.js" />
     <Content Include="Scripts\Custom\tooltip-init.js" />
+    <Content Include="Scripts\Custom\urls-create.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
     <Content Include="Scripts\esm\popper.js" />

@@ -16,7 +16,7 @@ namespace UrlShortenerMVC.ExcelModels
         public MemoryStream ExcelFileStream { get; set; }
 
         public static LongToShortUrlsExcelModel ExportLongToShortUrlsExcelFile(HttpPostedFileBase file, Entities db, HttpContextBase httpContext,
-                                                                  string userId, string campaignId, string userIP)
+                                                                  string userId, string campaignId, string userIP,  ShortExcelViewModel shortExcelViewModel)
         {
             var model = new LongToShortUrlsExcelModel();
             using (var dbContextTransaction = db.Database.BeginTransaction())
@@ -93,8 +93,9 @@ namespace UrlShortenerMVC.ExcelModels
                                         newUrl.LongUrl = ds.Tables[0].Rows[i][0].ToString();
                                         newUrl.UserId = userId;
                                         newUrl.Clicks = 0;
-                                        newUrl.MaxClicks = 0;
-                                        newUrl.Expires = false;
+                                        newUrl.MaxClicks = shortExcelViewModel.MaxClicks;
+                                        newUrl.Expires = shortExcelViewModel.Expires;
+                                        newUrl.ExpiresAt = shortExcelViewModel.Expires ? DateTime.ParseExact(shortExcelViewModel.ExpiresAtString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture) : (DateTime?) null;
                                         newUrl.HasExpired = false;
                                         newUrl.IPAddress = userIP;
                                         newUrl.CreatedAt = DateTime.Now;

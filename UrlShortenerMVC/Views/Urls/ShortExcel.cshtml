@@ -17,15 +17,57 @@
     </div>
     @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
     <div class="text-danger">@Model.Message</div>
+
+    if (Request.IsAuthenticated)
+    {
+        <p>
+            <a data-toggle="collapse" href="#options" role="button" aria-expanded="false" aria-controls="collapseExample">
+                + Options
+            </a>
+        </p>
+
+        <div class="collapse" id="options">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaxClicks, htmlAttributes: new { @class = "control-label mr-1" })
+                <span data-toggle="tooltip" title="0 stands for infinite clicks">
+                    <img src="~/Content/Images/info-icon.png" alt="&#128712;" width="15" height="15" />
+                </span>
+
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.MaxClicks, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MaxClicks, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group col">
+                @Html.LabelFor(model => model.Expires, htmlAttributes: new { @class = "control-label" })
+                @Html.EditorFor(model => model.Expires, new { htmlAttributes = new { onclick = "toggleExpiresAtField()" } })
+                @Html.ValidationMessageFor(model => model.Expires, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ExpiresAtString, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ExpiresAtString, new { htmlAttributes = new { @class = "form-control datepicker" } })
+                    @Html.ValidationMessageFor(model => model.ExpiresAtString, "", new { @class = "text-danger" })
+                    @Html.ValidationMessage("SpecifyExpirationDate", new { @class = "text-danger" })
+                    @Html.ValidationMessage("InvalidFormat", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    }
 }
 @if (!string.IsNullOrWhiteSpace(Model.CampaignId))
 {
     <div>
-        @Html.ActionLink("Back to Options", "AddLinks", "Campaigns", new { campaignId = Model.CampaignId }, null)
+        @Html.ActionLink("Back to Selection Screen", "AddLinks", "Campaigns", new { campaignId = Model.CampaignId }, null)
     </div>
 }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/short-excel")
+    @Scripts.Render("~/bundles/urls-create")
+    @Scripts.Render("~/bundles/bootstrap-datepicker")
+    @Scripts.Render("~/bundles/tooltip-init")
 }

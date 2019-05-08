@@ -25,9 +25,7 @@ namespace UrlShortenerMVC
                          "~/Scripts/Custom/short-excel.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap-datepicker").Include(
-                         "~/Scripts/bootstrap-datepicker.js"));
-
-            bundles.Add(new ScriptBundle("~/bundles/datepicker-init").Include(
+                         "~/Scripts/bootstrap-datepicker.js",
                          "~/Scripts/Custom/datepicker-init.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/tooltip-init").Include(
@@ -38,6 +36,9 @@ namespace UrlShortenerMVC
 
             bundles.Add(new ScriptBundle("~/bundles/Chart").Include(
                          "~/Scripts/Chart.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/urls-create").Include(
+                         "~/Scripts/Custom/urls-create.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

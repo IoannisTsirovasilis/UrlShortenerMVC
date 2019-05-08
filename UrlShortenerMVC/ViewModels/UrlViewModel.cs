@@ -29,6 +29,7 @@ namespace UrlShortenerMVC.ViewModels
         public int Token { get; set; }
         public int Clicks { get; set; }
 
+        [Range(0, 10000, ErrorMessage = "The field {0} must be between {1} and {2}.")]
         [Display(Name = "Max Clicks")]
         public int MaxClicks { get; set; }
         public bool Expires { get; set; }
@@ -45,6 +46,9 @@ namespace UrlShortenerMVC.ViewModels
         public string CampaignId { get; set; }
 
         public Campaign Campaign { get; set; }
+
+        [Display(Name = "Expiration Date")]
+        public string ExpiresAtString { get; set; }
 
         public static int GenerateLongToShortToken(Entities db)
         {
