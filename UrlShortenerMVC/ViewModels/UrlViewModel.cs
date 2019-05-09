@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.Configuration;
 using UrlShortenerMVC.Models;
 
 namespace UrlShortenerMVC.ViewModels
@@ -71,6 +72,34 @@ namespace UrlShortenerMVC.ViewModels
                 token /= base62.Length;
             } while (token > 0);
             return shortUrl;
+        }
+
+        public static bool HasReachedShorteningLimit(string userId, string IPAddress, Entities db)
+        {
+            var today = DateTime.Now;
+            var firstDateOfMonth = new DateTime(today.Year, today.Month, 1);
+            var firstDateOfNextMonth = firstDateOfMonth.AddMonths(1);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                if (db.Urls.Where(x => x.IPAddress == IPAddress
+                                  && x.CreatedAt >= firstDateOfMonth
+                                  && x.CreatedAt < firstDateOfNextMonth).
+                                  Count() >= int.Parse(WebConfigurationManager.AppSettings["MonthlyLimitUnauthenticated"]))
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (db.Urls.Where(x => x.UserId == userId
+                                  && x.CreatedAt >= firstDateOfMonth
+                                  && x.CreatedAt < firstDateOfNextMonth).
+                                  Count() >= int.Parse(WebConfigurationManager.AppSettings["MonthlyLimitAuthenticated"]))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static implicit operator Url(UrlViewModel model)

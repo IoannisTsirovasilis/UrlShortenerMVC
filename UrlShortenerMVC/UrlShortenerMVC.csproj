@@ -287,7 +287,6 @@
     <Content Include="Content\Custom\styles.css" />
     <Content Include="Content\Images\copy-icon.png" />
     <Content Include="Content\Images\info-icon.png" />
-    <Content Include="Content\Images\search-icon.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />

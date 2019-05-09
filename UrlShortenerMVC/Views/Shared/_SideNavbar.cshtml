@@ -13,6 +13,7 @@
             <ul class="navbar-nav flex-column border-bottom w-100 ">
                 <li class="nav-link nav-item active pl-4 pr-5">Total Links: @Model.TotalLinks</li>
                 <li class="nav-link nav-item active pl-4 pr-5">Total Clicks: @Model.TotalClicks</li>
+                <li class="nav-link nav-item active pl-4 pr-5">Remaining Links: @Model.RemainingLinks</li>
             </ul>
             <div class="navbar-nav flex-column w-100">
                 @Html.ActionLink("Campaigns", "Index", "Campaigns", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })

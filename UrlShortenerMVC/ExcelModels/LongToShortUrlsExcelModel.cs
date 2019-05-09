@@ -6,6 +6,7 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using UrlShortenerMVC.Jobs;
 using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
@@ -15,6 +16,7 @@ namespace UrlShortenerMVC.ExcelModels
     public class LongToShortUrlsExcelModel
     {
         public bool Succeeded { get; set; }
+        public string Message { get; set; }
         public MemoryStream ExcelFileStream { get; set; }
 
         public static LongToShortUrlsExcelModel ExportLongToShortUrlsExcelFile(HttpPostedFileBase file, Entities db, HttpContextBase httpContext,
@@ -68,12 +70,14 @@ namespace UrlShortenerMVC.ExcelModels
 
                                         if (user == null)
                                         {
+                                            File.Delete(filePath);
                                             throw new Exception();
                                         }
                                         campaignId = string.IsNullOrWhiteSpace(campaignId) ? "" : campaignId;
                                         var campaign = db.Campaigns.Find(campaignId);
                                         if (campaign != null && campaign.CreatedBy != user.Id)
                                         {
+                                            File.Delete(filePath);
                                             throw new Exception();
                                         }
                                         var url = db.Urls.FirstOrDefault(x => x.LongUrl == tmp && x.UserId == user.Id && x.CampaignId == campaignId);
@@ -82,6 +86,11 @@ namespace UrlShortenerMVC.ExcelModels
                                             worksheet.Cells[i + 2, 1].Value = url.LongUrl;
                                             worksheet.Cells[i + 2, 2].Value = url.ShortUrl;
                                             continue;
+                                        }
+                                        if (UrlViewModel.HasReachedShorteningLimit(user.Id, null, db))
+                                        {
+                                            File.Delete(filePath);
+                                            throw new Exception(WebConfigurationManager.AppSettings["MonthlyLimitReachedTitle"]);
                                         }
                                         worksheet.Cells[i + 2, 1].Value = ds.Tables[0].Rows[i][0].ToString();
                                         worksheet.Cells[i + 2, 2].Value = shortUrl;
@@ -122,10 +131,11 @@ namespace UrlShortenerMVC.ExcelModels
                     model.Succeeded = true;
                     model.ExcelFileStream = new MemoryStream(package.GetAsByteArray());
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     dbContextTransaction.Rollback();
-                    model.Succeeded = false;                  
+                    model.Succeeded = false;
+                    model.Message = e.Message;
                 }
             }
             return model;

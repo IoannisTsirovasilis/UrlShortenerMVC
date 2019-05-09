@@ -82,7 +82,14 @@ namespace UrlShortenerMVC.Controllers
                 if (result.Succeeded)
                 {
                     return File(result.ExcelFileStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ShortenedLinks.xlsx");
-                }                
+                }
+                if (result.Message == WebConfigurationManager.AppSettings["MonthlyLimitReachedTitle"])
+                {
+                    ViewBag.Title = WebConfigurationManager.AppSettings["MonthlyLimitReachedExcelTitle"];
+                    ViewBag.Message = string.Format(WebConfigurationManager.AppSettings["MonthlyLimitReachedExcelMessage"],
+                                             WebConfigurationManager.AppSettings["MonthlyLimitAuthenticated"]);
+                    return View(model);
+                }
             }
             return RedirectToAction("ShortExcel", new { campaignId, title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
         }
@@ -129,6 +136,17 @@ namespace UrlShortenerMVC.Controllers
                             {
                                 return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl, CampaignId = url.CampaignId });
                             }
+                            if (UrlViewModel.HasReachedShorteningLimit(user.Id, null, db))
+                            {
+                                return RedirectToAction("Create", new
+                                                        {
+                                                            campaignId = model.CampaignId,
+                                                            title = WebConfigurationManager.AppSettings["MonthlyLimitReachedTitle"],
+                                                            message = string.Format(WebConfigurationManager.AppSettings["MonthlyLimitReachedMessage"], 
+                                                                      WebConfigurationManager.AppSettings["MonthlyLimitAuthenticated"],
+                                                                      new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).ToString()) });
+                            }
+
                             model.UserId = user.Id;
                             var campaign = db.Campaigns.Find(model.CampaignId);
                             if (campaign != null && campaign.CreatedBy == user.Id)
@@ -155,6 +173,17 @@ namespace UrlShortenerMVC.Controllers
                             if (url != null)
                             {
                                 return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl });
+                            }
+                            if (UrlViewModel.HasReachedShorteningLimit(null, Request.UserHostAddress, db))
+                            {
+                                return RedirectToAction("Create", new
+                                {
+                                    campaignId = model.CampaignId,
+                                    title = WebConfigurationManager.AppSettings["MonthlyLimitReachedTitle"],
+                                    message = string.Format(WebConfigurationManager.AppSettings["MonthlyLimitReachedMessage"],
+                                                                      WebConfigurationManager.AppSettings["MonthlyLimitUnauthenticated"],
+                                                                      new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).ToString())
+                                });
                             }
                             model.MaxClicks = 0;
                             model.Expires = true;
