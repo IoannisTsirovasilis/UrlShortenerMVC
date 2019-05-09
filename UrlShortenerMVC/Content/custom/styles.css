@@ -31,3 +31,17 @@ a.text-orange:hover, a.text-orange:focus {
 .text-pale-red {
     color: #721c24;
 }
+
+.clipboard:hover {
+    border: 1px solid #bfbfbf;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #bfbfbf;
+}
+
+.clipboard:active {
+    border: 1px solid #a6a6a6;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #a6a6a6;
+}

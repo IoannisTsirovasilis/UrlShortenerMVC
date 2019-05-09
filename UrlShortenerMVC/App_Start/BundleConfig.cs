@@ -40,6 +40,10 @@ namespace UrlShortenerMVC
             bundles.Add(new ScriptBundle("~/bundles/urls-create").Include(
                          "~/Scripts/Custom/urls-create.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/clipboard").Include(
+                         "~/Scripts/clipboard.js",
+                         "~/Scripts/Custom/clipboard-init.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/Site.css",

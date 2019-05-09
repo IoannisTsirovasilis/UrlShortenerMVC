@@ -13,11 +13,17 @@
         </div>
     </div>
     @Html.ValidationMessageFor(model => model.LongUrl, "", new { @class = "text-danger" })
-    <div class="form-group">
-        <div class="col-md-10">
-            <a href="@Html.DisplayFor(model => model.ShortUrl)">@Html.DisplayFor(model => model.ShortUrl, new { htmlAttributes = new { @class = "form-control" } })</a>
+    if (!string.IsNullOrWhiteSpace(Model.ShortUrl))
+    {
+        <div class="form-group mt-2">
+            <div class="col-md-10">
+                <a href="@Html.DisplayFor(model => model.ShortUrl)">@Html.DisplayFor(model => model.ShortUrl, new { htmlAttributes = new { @class = "form-control" } })</a>
+                <img class="clipboard p-1" src="~/Content/Images/copy-icon.png" alt="copy" width="30" height="30" data-clipboard-text="@Model.ShortUrl"
+                     data-toggle="tooltip" data-placement="top" title="Copy" />
+            </div>
         </div>
-    </div>
+    }
+
     if (Request.IsAuthenticated)
     {
         <p>
@@ -30,7 +36,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.MaxClicks, htmlAttributes: new { @class = "control-label mr-1" })
                 <span data-toggle="tooltip" title="0 stands for infinite clicks">
-                    <img src="~/Content/Images/info-icon.png" alt="&#128712;" width="15" height="15"/>
+                    <img src="~/Content/Images/info-icon.png" alt="&#128712;" width="15" height="15" />
                 </span>
 
                 <div class="col-md-10">
@@ -52,6 +58,7 @@
                     @Html.ValidationMessageFor(model => model.ExpiresAtString, "", new { @class = "text-danger" })
                     @Html.ValidationMessage("SpecifyExpirationDate", new { @class = "text-danger" })
                     @Html.ValidationMessage("InvalidFormat", new { @class = "text-danger" })
+                    @Html.ValidationMessage("InvalidDate", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
@@ -68,5 +75,6 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/urls-create")
     @Scripts.Render("~/bundles/bootstrap-datepicker")
+    @Scripts.Render("~/bundles/clipboard")
     @Scripts.Render("~/bundles/tooltip-init")
 }

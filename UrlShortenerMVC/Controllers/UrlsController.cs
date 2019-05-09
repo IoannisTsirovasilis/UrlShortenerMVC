@@ -143,6 +143,10 @@ namespace UrlShortenerMVC.Controllers
                                     return View(model);
                                 }
                                 model.ExpiresAt = DateTime.ParseExact(model.ExpiresAtString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                                if (model.ExpiresAt < DateTime.Now)
+                                {
+                                    ModelState.AddModelError("InvalidDate", "Invalid date.");
+                                }
                             }
                         }
                         else
@@ -153,7 +157,8 @@ namespace UrlShortenerMVC.Controllers
                                 return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl });
                             }
                             model.MaxClicks = 0;
-                            model.Expires = false;
+                            model.Expires = true;
+                            model.ExpiresAt = DateTime.Now.AddMonths(1);
                             
                         }
                         model.Token = UrlViewModel.GenerateLongToShortToken(db);
@@ -188,29 +193,6 @@ namespace UrlShortenerMVC.Controllers
             }
             return View(model);
         }
-
-        public ActionResult SideNavbar()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                var userId = User.Identity.GetUserId();
-
-                return View(db.Urls.Where(u => u.UserId == userId).ToList().Select(x => new UrlViewModel
-                {
-                    Id = x.Id,
-                    ShortUrl = x.ShortUrl,
-                    LongUrl = x.LongUrl,
-                    Clicks = x.Clicks,
-                    CreatedAt = x.CreatedAt,
-                    Expires = x.Expires,
-                    ExpiresAt = x.ExpiresAt,
-                    HasExpired = x.HasExpired,
-                    MaxClicks = x.MaxClicks
-                }));
-            }
-            return View("Error");
-        }
-
         
 
         protected override void Dispose(bool disposing)

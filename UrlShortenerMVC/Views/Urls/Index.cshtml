@@ -44,8 +44,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.LongUrl)
             </td>
-            <td>
+            <td class="d-flex justify-content-between">
                 @Html.DisplayFor(modelItem => item.ShortUrl)
+                <img class="clipboard p-1" src="~/Content/Images/copy-icon.png" alt="copy" width="30" height="30" data-clipboard-text="@item.ShortUrl" 
+                     data-toggle="tooltip" data-placement="top" title="Copy"/>
             </td>
             <td class="text-center">
                 @Html.DisplayFor(modelItem => item.Clicks)
@@ -69,3 +71,8 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
+
+@section Scripts {
+    @Scripts.Render("~/bundles/clipboard")
+    @Scripts.Render("~/bundles/tooltip-init")
+}
