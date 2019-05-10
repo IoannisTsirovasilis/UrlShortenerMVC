@@ -43,11 +43,28 @@ namespace UrlShortenerMVC.Controllers
                 else
                 {
                     labels = new string[(int)(campaign.EndDate - campaign.StartDate).TotalDays];
-
+                    var padding = labels.Length / 30;
+                    var paddingCounter = 0;
                     var totalClicks = db.UrlClicks.Include(x => x.Url).Where(x => x.Url.Campaign.Id == campaignId).ToList();
                     for (var i = 0; i < labels.Length; i++)
                     {
-                        labels[i] = campaign.StartDate.AddDays(i).ToString("dd-MMM");
+                        paddingCounter = paddingCounter >= padding ? 0 : paddingCounter;
+                        if (padding > 0)
+                        {
+                            if (paddingCounter == 0)
+                            {
+                                labels[i] = campaign.StartDate.AddDays(i).ToString("dd-MMM");
+                            }
+                            else
+                            {
+                                labels[i] = "";
+                            }
+                            paddingCounter++;
+                        }
+                        else
+                        {
+                            labels[i] = campaign.StartDate.AddDays(i).ToString("dd-MMM");
+                        }
                         values.Add(totalClicks.Where(x => x.ClickedAt.Date == campaign.StartDate.AddDays(i).Date).Count());
                     }
                 }
