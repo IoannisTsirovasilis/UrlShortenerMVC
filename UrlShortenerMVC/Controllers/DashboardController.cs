@@ -48,7 +48,7 @@ namespace UrlShortenerMVC.Controllers
                     var totalClicks = db.UrlClicks.Include(x => x.Url).Where(x => x.Url.Campaign.Id == campaignId).ToList();
                     for (var i = 0; i < labels.Length; i++)
                     {
-                        paddingCounter = paddingCounter >= padding ? 0 : paddingCounter;
+                        paddingCounter = paddingCounter > padding ? 0 : paddingCounter;
                         if (padding > 0)
                         {
                             if (paddingCounter == 0)
