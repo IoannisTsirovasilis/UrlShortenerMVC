@@ -35,5 +35,17 @@ namespace UrlShortenerMVC.Controllers
             }
             return RedirectToAction("Login", "Account");
         }
+
+        [AllowAnonymous]
+        public ActionResult TermsAndConditions()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult PrivacyPolicy()
+        {
+            return View();
+        }
     }
 }
