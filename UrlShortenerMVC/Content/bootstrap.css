@@ -7790,7 +7790,7 @@ button.bg-dark:focus {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 1030;
+  z-index: -1;
 }
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {

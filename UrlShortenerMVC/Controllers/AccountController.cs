@@ -115,7 +115,7 @@ namespace UrlShortenerMVC.Controllers
                 }
 
                 var response = ValidateCaptcha(model.RecaptchaToken);
-                if (!response.Success || response.Score < 0.5)
+                if (!response.Success) // || response.Score < 0.5)
                 {
                     throw new Exception("Recaptcha Validation Failed.");
                 }
@@ -178,7 +178,7 @@ namespace UrlShortenerMVC.Controllers
                 if (ModelState.IsValid)
                 {
                     var response = ValidateCaptcha(model.RecaptchaToken);
-                    if (!response.Success || response.Score < 0.5)
+                    if (!response.Success) // || response.Score < 0.5)
                     {
                         throw new Exception("Recaptcha Validation Failed.");
                     }
