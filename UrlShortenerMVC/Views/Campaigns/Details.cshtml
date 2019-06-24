@@ -35,7 +35,9 @@
         <dd>
             @foreach (var u in Model.GetUrls())
             {
-                @(u.LongUrl + " - " + u.ShortUrl) <br />
+                <a href="@u.LongUrl" target="_blank">@u.LongUrl</a>
+                @(" - ") 
+                <a href="@u.ShortUrl" target="_blank">@u.ShortUrl</a><br />
             }
         </dd>
     </dl>

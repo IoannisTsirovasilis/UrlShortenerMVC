@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
+using Elmah;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -97,8 +98,9 @@ namespace UrlShortenerMVC.Controllers
                 }
                 AddErrors(result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
                 ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
                 

@@ -16,10 +16,11 @@ namespace UrlShortenerMVC.ViewModels
         [MaxLength(128, ErrorMessage = "The field {0} cannot exceed {1} characters.")]
         public string Name { get; set; }
 
-        
+
+        [Display(Name = "Starting Date")]
         public DateTime StartDate { get; set; }
 
-        
+        [Display(Name = "Ending Date")]
         public DateTime EndDate { get; set; }
 
         [Required]
@@ -36,9 +37,9 @@ namespace UrlShortenerMVC.ViewModels
 
         public AspNetUser User { get; set; }
 
+        public bool IsActive { get; set; }
+
         public List<Url> Urls { get; }
-
-
 
         public int GetUrlsCount() => db.Urls.Where(x => x.CampaignId == Id).Count();
 
@@ -53,7 +54,8 @@ namespace UrlShortenerMVC.ViewModels
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
                 CreatedAt = model.CreatedAt,
-                CreatedBy = model.CreatedBy
+                CreatedBy = model.CreatedBy,
+                IsActive = model.IsActive
             };
         }
 
@@ -69,7 +71,8 @@ namespace UrlShortenerMVC.ViewModels
                 CreatedBy = model.CreatedBy,
                 User = model.AspNetUser,
                 StartDateString = model.StartDate.ToString("MM/dd/yyyy"),
-                EndDateString = model.EndDate.ToString("MM/dd/yyyy")
+                EndDateString = model.EndDate.ToString("MM/dd/yyyy"),
+                IsActive = model.IsActive
             };
         }
     }

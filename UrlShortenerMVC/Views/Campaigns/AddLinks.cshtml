@@ -2,3 +2,7 @@
 
 @Html.ActionLink("Add Single Link", "Create", "Urls", new { campaignId = ViewBag.CampaignId }, new { @class = "btn btn-orange" })
 @Html.ActionLink("Add Links From Excel File", "ShortExcel", "Urls", new { campaignId = ViewBag.CampaignId }, new { @class = "btn btn-orange" })
+
+<p class="mt-2">
+    @Html.ActionLink("Back to Campaigns", "Index", "Campaigns", null, null)
+</p>

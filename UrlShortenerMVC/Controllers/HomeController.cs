@@ -11,7 +11,14 @@ namespace UrlShortenerMVC.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private Entities db = new Entities();
+        private readonly Entities db = new Entities();
+
+
+        //[AllowAnonymous]
+        //public ActionResult UnderConstruction()
+        //{
+        //    return View();
+        //}
 
         public ActionResult SideNavbar()
         {

@@ -12,6 +12,7 @@ using System.Web.Configuration;
 using PagedList;
 using Hangfire;
 using UrlShortenerMVC.Jobs;
+using Elmah;
 
 namespace UrlShortenerMVC.Controllers
 {
@@ -53,8 +54,9 @@ namespace UrlShortenerMVC.Controllers
                     model.Add(u);
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
                 ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
             }
@@ -73,6 +75,7 @@ namespace UrlShortenerMVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ShortExcel(HttpPostedFileBase file, string campaignId, ShortExcelViewModel model)
         {
             if (file.ContentLength > 0)
@@ -209,12 +212,14 @@ namespace UrlShortenerMVC.Controllers
                         
                         return View(new UrlViewModel { LongUrl = model.LongUrl, ShortUrl = model.ShortUrl, CampaignId = model.CampaignId });
                     }
-                    catch (FormatException)
+                    catch (FormatException ex)
                     {
+                        ErrorSignal.FromCurrentContext().Raise(ex);
                         ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
                     }
                     catch (Exception ex)
                     {
+                        ErrorSignal.FromCurrentContext().Raise(ex);
                         dbContextTransaction.Rollback();
                         return RedirectToAction("Create", new { campaignId = model.CampaignId, title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
                     }

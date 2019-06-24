@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
+using Elmah;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json;
+using UrlShortenerMVC.EmailTemplates;
+using UrlShortenerMVC.Helpers;
 using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
 
@@ -52,10 +58,43 @@ namespace UrlShortenerMVC.Controllers
         }
 
         //
+        // GET: /Account/ConfirmEmailNotification
+        [AllowAnonymous]
+        public ActionResult ConfirmEmailNotification()
+        {
+            return View();
+        }
+
+        //
+        // GET: /Account/ConfirmEmailNotification
+        [AllowAnonymous]
+        public ActionResult ResendConfirmEmail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<ActionResult> ResendConfirmEmail(ResendConfirmEmail model)
+        {
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                _ = await SendEmailConfirmationTokenAsync(user.Id, user.Email, "Email address confirmation");
+            }
+            return RedirectToAction("ConfirmEmailNotification", "Account");
+        }
+
+        //
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Urls");
+            }
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -75,6 +114,26 @@ namespace UrlShortenerMVC.Controllers
                     return View(model);
                 }
 
+                var response = ValidateCaptcha(model.RecaptchaToken);
+                if (!response.Success || response.Score < 0.5)
+                {
+                    throw new Exception("Recaptcha Validation Failed.");
+                }
+
+                var user = await UserManager.FindByEmailAsync(model.Email);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View(model);
+                }
+
+                if (!user.EmailConfirmed)
+                {
+                    ModelState.AddModelError("", "You should confirm your email before logging in.");
+                    return View(model);
+                }
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, change to shouldLockout: true
                 var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
@@ -90,8 +149,9 @@ namespace UrlShortenerMVC.Controllers
                         return View(model);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
                 ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
                 return View(model);
@@ -117,28 +177,34 @@ namespace UrlShortenerMVC.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var response = ValidateCaptcha(model.RecaptchaToken);
+                    if (!response.Success || response.Score < 0.5)
+                    {
+                        throw new Exception("Recaptcha Validation Failed.");
+                    }
+
+                    if (await UserManager.FindByEmailAsync(model.Email) != null)
+                    {
+                        ModelState.AddModelError("Email", "Email is in use.");
+                    }
+
                     var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                     var result = await UserManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        _ = await SendEmailConfirmationTokenAsync(user.Id, user.Email, "Email address confirmation");
 
-                        // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                        // Send an email with this link
-                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                        return RedirectToAction("Index", "Dashboard");
+                        return RedirectToAction("ConfirmEmailNotification", "Account");
                     }
-                    AddErrors(result);
+                    AddErrors(result);                    
                 }
 
                 // If we got this far, something failed, redisplay form
                 return View(model);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
                 ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
                 return View(model);
@@ -176,18 +242,14 @@ namespace UrlShortenerMVC.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                if (user != null && await UserManager.IsEmailConfirmedAsync(user.Id))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
+                    _ = await SendResetPasswordTokenAsync(user.Id, user.Email, "Reset account password");
+                    
                 }
 
-                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                return View("ForgotPasswordConfirmation");
             }
 
             // If we got this far, something failed, redisplay form
@@ -330,6 +392,56 @@ namespace UrlShortenerMVC.Controllers
                 }
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
+        }
+
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string email, string subject)
+        {
+            string token = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId = userID, code = token }, protocol: Request.Url.Scheme);
+            string to = email;
+            string from = WebConfigurationManager.AppSettings["NoReplyEmail"];
+            string body = EmailTemplate.GetConfirmEmailBody(callbackUrl);
+            var msg = new MailMessage(from, to, subject, body)
+            {
+                IsBodyHtml = true
+            };
+            await SendEmail(msg);
+            return callbackUrl;
+        }
+
+        private async Task<string> SendResetPasswordTokenAsync(string userID, string email, string subject)
+        {
+            string token = await UserManager.GeneratePasswordResetTokenAsync(userID);
+            var callbackUrl = Url.Action("ResetPassword", "Account",
+               new { userId = userID, code = token }, protocol: Request.Url.Scheme);
+            string to = email;
+            string from = WebConfigurationManager.AppSettings["NoReplyEmail"];
+            string body = EmailTemplate.GetResetPasswordBody(callbackUrl);
+            var msg = new MailMessage(from, to, subject, body)
+            {
+                IsBodyHtml = true
+            };
+            await SendEmail(msg);
+            return callbackUrl;
+        }
+
+        private CaptchaResponseHelper ValidateCaptcha(string token)
+        {
+            var secret = WebConfigurationManager.AppSettings["RecaptchaPrivateKey"];
+            var client = new WebClient();
+            var jsonResult = client.DownloadString(string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token));
+            return JsonConvert.DeserializeObject<CaptchaResponseHelper>(jsonResult.ToString());
+        }
+
+
+        private async Task SendEmail(MailMessage msg)
+        {
+            var client = new SmtpClient()
+            {
+                EnableSsl = false
+            };
+            await client.SendMailAsync(msg);
         }
         #endregion
     }

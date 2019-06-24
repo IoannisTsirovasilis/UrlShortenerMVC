@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Elmah;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,7 +15,7 @@ namespace UrlShortenerMVC.Controllers
     [Authorize]
     public class CampaignsController : Controller
     {
-        private Entities db = new Entities();
+        private readonly Entities db = new Entities();
 
         // GET: Campaigns
         public ActionResult Index(string title, string message)
@@ -23,7 +24,7 @@ namespace UrlShortenerMVC.Controllers
             try
             {
                 var userId = User.Identity.GetUserId();
-                db.Campaigns.Where(x => x.CreatedBy == userId).ToList().ForEach(delegate (Campaign c)
+                db.Campaigns.Where(x => x.CreatedBy == userId && x.IsActive).ToList().ForEach(delegate (Campaign c)
                 {
                     model.Add(c);
                 });                
@@ -48,14 +49,21 @@ namespace UrlShortenerMVC.Controllers
                     throw new Exception();
                 }
                 CampaignViewModel campaign = db.Campaigns.Find(id);
-                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                if (campaign == null)
                 {
-                    throw new Exception();
+                    throw new Exception("Campaign does not exist.");
                 }
+
+                if (campaign.CreatedBy != User.Identity.GetUserId())
+                {
+                    throw new Exception("User does not own this campaign.");
+                }
+
                 return View(campaign);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
             }
         }
@@ -77,6 +85,13 @@ namespace UrlShortenerMVC.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var userId = User.Identity.GetUserId();
+                    if (db.Campaigns.FirstOrDefault(x => x.Name == campaign.Name && x.CreatedBy == userId) != null)
+                    {
+                        ModelState.AddModelError("CampaignExists", "A campaign with this name already exists.");
+                        return View(campaign);
+                    }
+
                     campaign.StartDate = DateTime.ParseExact(campaign.StartDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
                     campaign.EndDate = DateTime.ParseExact(campaign.EndDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
                     if (campaign.StartDate > campaign.EndDate)
@@ -89,19 +104,22 @@ namespace UrlShortenerMVC.Controllers
                         campaign.Id = Guid.NewGuid().ToString();
                     } while (db.Campaigns.Find(campaign.Id) != null);
                     campaign.CreatedAt = DateTime.Now;
-                    campaign.CreatedBy = User.Identity.GetUserId();
+                    campaign.CreatedBy = userId;
+                    campaign.IsActive = true;
                     db.Campaigns.Add(campaign);
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
 
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
                 ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
             }
@@ -118,14 +136,20 @@ namespace UrlShortenerMVC.Controllers
                     throw new Exception();
                 }
                 CampaignViewModel campaign = db.Campaigns.Find(id);
-                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                if (campaign == null)
                 {
-                    throw new Exception();
+                    throw new Exception("Campaign does not exist.");
+                }
+
+                if (campaign.CreatedBy != User.Identity.GetUserId())
+                {
+                    throw new Exception("User does not own this campaign.");
                 }
                 return View(campaign);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
             }
         }
@@ -141,6 +165,13 @@ namespace UrlShortenerMVC.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var userId = User.Identity.GetUserId();
+                    if (db.Campaigns.FirstOrDefault(x => x.Name == model.Name && x.Id != model.Id && x.CreatedBy == userId) != null)
+                    {
+                        ModelState.AddModelError("CampaignExists", "A campaign with this name already exists.");
+                        return View(model);
+                    }
+
                     model.StartDate = DateTime.ParseExact(model.StartDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
                     model.EndDate = DateTime.ParseExact(model.EndDateString, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture);
                     if (model.StartDate > model.EndDate)
@@ -161,12 +192,14 @@ namespace UrlShortenerMVC.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ModelState.AddModelError("InvalidFormat", "Invalid Date Format");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
                 ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
             }
@@ -183,14 +216,20 @@ namespace UrlShortenerMVC.Controllers
                     throw new Exception();
                 }
                 CampaignViewModel campaign = db.Campaigns.Find(id);
-                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                if (campaign == null)
                 {
-                    throw new Exception();
+                    throw new Exception("Campaign does not exist.");
+                }
+
+                if (campaign.CreatedBy != User.Identity.GetUserId())
+                {
+                    throw new Exception("User does not own this campaign.");
                 }
                 return View(campaign);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
             }
         }
@@ -200,25 +239,42 @@ namespace UrlShortenerMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            try
+            using (var dbContextTransaction = db.Database.BeginTransaction())
             {
-                if (string.IsNullOrWhiteSpace(id))
+                try
                 {
-                    throw new Exception();
+                    if (string.IsNullOrWhiteSpace(id))
+                    {
+                        throw new Exception();
+                    }
+                    Campaign campaign = db.Campaigns.Find(id);
+                    if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                    {
+                        throw new Exception();
+                    }
+                    var urls = db.Urls.Where(x => x.CampaignId == campaign.Id).ToList();
+                    urls.ForEach(delegate (Url x)
+                    {
+                        x.HasExpired = true;
+                        x.ExpiresAt = DateTime.Now;
+                        x.Expires = true;
+                        db.Entry(x).State = EntityState.Modified;
+                    });
+
+                    campaign.IsActive = false;
+                    db.Entry(campaign).State = EntityState.Modified;
+
+                    db.SaveChanges();
+                    dbContextTransaction.Commit();
+                    return RedirectToAction("Index");
                 }
-                Campaign campaign = db.Campaigns.Find(id);
-                if (campaign == null || campaign.CreatedBy != User.Identity.GetUserId())
+                catch (Exception ex)
                 {
-                    throw new Exception();
+                    ErrorSignal.FromCurrentContext().Raise(ex);
+                    dbContextTransaction.Rollback();
+                    return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
                 }
-                db.Campaigns.Remove(campaign);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("Index", new { title = WebConfigurationManager.AppSettings["ErrorTitle"], message = WebConfigurationManager.AppSettings["ErrorMessage"] });
-            }            
+            }                      
         }
 
         // GET: Urls/AddLinks/campaignId

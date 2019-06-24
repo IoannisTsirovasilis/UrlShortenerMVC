@@ -65,7 +65,7 @@ namespace UrlShortenerMVC.ViewModels
 
         public static string GenerateShortUrl(int token)
         {
-            var shortUrl = "http://85.73.244.104:6677/";
+            var shortUrl = WebConfigurationManager.AppSettings["Sn3rUri"];
             do
             {
                 shortUrl += base62[token % 62];

@@ -2,6 +2,13 @@
 
 namespace UrlShortenerMVC.ViewModels
 {  
+    public class ResendConfirmEmail
+    {
+        [Required]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+    }
+
     public class ForgotViewModel
     {
         [Required]
@@ -23,6 +30,8 @@ namespace UrlShortenerMVC.ViewModels
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+
+        public string RecaptchaToken { get; set; }
     }
 
     public class RegisterViewModel
@@ -42,6 +51,8 @@ namespace UrlShortenerMVC.ViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+        
+        public string RecaptchaToken { get; set; }
     }
 
     public class ResetPasswordViewModel

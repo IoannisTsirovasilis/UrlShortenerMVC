@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using Elmah;
+using Hangfire;
 using System;
 using System.Data.Entity;
 using UrlShortenerMVC.Models;
@@ -27,6 +28,7 @@ namespace UrlShortenerMVC.Jobs
                 }
                 catch (Exception ex)
                 {
+                    ErrorSignal.FromCurrentContext().Raise(ex);
                     dbContextTransaction.Rollback();
                     BackgroundJob.Schedule(() => ExpireUrl(id), TimeSpan.FromMinutes(5));
                 }

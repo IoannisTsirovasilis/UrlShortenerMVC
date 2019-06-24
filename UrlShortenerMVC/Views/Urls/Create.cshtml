@@ -1,6 +1,6 @@
 ﻿@model UrlShortenerMVC.ViewModels.UrlViewModel
 
-@using (Html.BeginForm("Create", "Urls", FormMethod.Post, new { @class = "form-horizontal container mt-3" }))
+@using (Html.BeginForm("Create", "Urls", FormMethod.Post, new { @id = "form", @class = "form-horizontal container mt-3" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -9,7 +9,10 @@
     <div class="input-group">
         @Html.EditorFor(model => model.LongUrl, new { htmlAttributes = new { @class = "form-control col", placeholder = "Shorten a link" } })
         <div class="input-group-append">
-            <button type="submit" class="btn btn-orange rounded-right">SHORTEN</button>
+            <button id="submit" class="btn btn-orange rounded-right" type="submit" onclick="disableSubmitButton()">
+                <span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                <span id="spinner-label">SHORTEN</span>
+            </button>
         </div>
     </div>
     @Html.ValidationMessageFor(model => model.LongUrl, "", new { @class = "text-danger" })
@@ -73,6 +76,7 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/Custom/spinner.js"></script>
     @Scripts.Render("~/bundles/urls-create")
     @Scripts.Render("~/bundles/bootstrap-datepicker")
     @Scripts.Render("~/bundles/clipboard")

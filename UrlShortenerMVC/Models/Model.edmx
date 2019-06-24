@@ -30,6 +30,7 @@
           <Property Name="Name" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="StartDate" Type="date" Nullable="false" />
           <Property Name="EndDate" Type="date" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
@@ -60,7 +61,9 @@
           <Property Name="CreatedAt" Type="datetime" Nullable="false" />
         </EntityType>
         <Association Name="FK_Campaigns_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="Campaigns" Type="Self.Campaigns" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -72,7 +75,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_UrlClicks_Urls">
-          <End Role="Urls" Type="Self.Urls" Multiplicity="1" />
+          <End Role="Urls" Type="Self.Urls" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="UrlClicks" Type="Self.UrlClicks" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Urls">
@@ -84,7 +89,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Urls_AspNetUsers">
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1" />
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="Urls" Type="Self.Urls" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AspNetUsers">
@@ -186,6 +193,7 @@
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="Models.FK_Campaigns_AspNetUsers" FromRole="Campaign" ToRole="AspNetUser" />
           <NavigationProperty Name="Urls" Relationship="Models.FK_Urls_Campaigns" FromRole="Campaign" ToRole="Url" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Url">
           <Key>
@@ -292,6 +300,7 @@
           <EntitySetMapping Name="Campaigns">
             <EntityTypeMapping TypeName="Models.Campaign">
               <MappingFragment StoreEntitySet="Campaigns">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />

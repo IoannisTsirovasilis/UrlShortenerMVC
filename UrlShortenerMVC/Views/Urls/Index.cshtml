@@ -42,10 +42,10 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.LongUrl)
+                <a href="@item.LongUrl" target="_blank">@item.LongUrl</a>
             </td>
             <td class="d-flex justify-content-between border-0">
-                @Html.DisplayFor(modelItem => item.ShortUrl)
+                <a href="@item.ShortUrl" target="_blank">@item.ShortUrl</a>
                 <img class="clipboard p-1" src="~/Content/Images/copy-icon.png" alt="copy" width="30" height="30" data-clipboard-text="@item.ShortUrl" 
                      data-toggle="tooltip" data-placement="top" title="Copy"/>
             </td>

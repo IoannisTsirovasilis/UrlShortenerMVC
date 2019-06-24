@@ -8,20 +8,22 @@ using System.Web.Mvc;
 using UrlShortenerMVC.Models;
 using UrlShortenerMVC.ViewModels;
 using System.Web.Configuration;
+using Elmah;
 
 namespace UrlShortenerMVC.Controllers
 {
     [Authorize]
     public class DashboardController : Controller
     {
-        private Entities db = new Entities();
+        private readonly Entities db = new Entities();
+
         // GET: Dashboard
         public ActionResult Index(string campaignId)
         {
             try
             {
                 var userId = User.Identity.GetUserId();
-                ViewBag.CampaignId = new SelectList(db.Campaigns.Where(x => x.CreatedBy == userId).OrderByDescending(x => x.CreatedAt), "Id", "Name", campaignId);
+                ViewBag.CampaignId = new SelectList(db.Campaigns.Where(x => x.CreatedBy == userId && x.IsActive).OrderByDescending(x => x.CreatedAt), "Id", "Name", campaignId);
 
                 var barChart = new BarChart();
                 string[] labels;
@@ -88,8 +90,9 @@ namespace UrlShortenerMVC.Controllers
                 ViewBag.Campaign = campaignId;
                 return View();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrorSignal.FromCurrentContext().Raise(ex);
                 ViewBag.Title = WebConfigurationManager.AppSettings["ErrorTitle"];
                 ViewBag.Message = WebConfigurationManager.AppSettings["ErrorMessage"];
                 return View();
@@ -135,7 +138,7 @@ namespace UrlShortenerMVC.Controllers
             try
             {
                 var userId = User.Identity.GetUserId();
-                db.Campaigns.Where(x => x.CreatedBy == userId).ToList().ForEach(delegate (Campaign c)
+                db.Campaigns.Where(x => x.CreatedBy == userId && x.IsActive).ToList().ForEach(delegate (Campaign c)
                 {
                     model.Add(c);
                 });

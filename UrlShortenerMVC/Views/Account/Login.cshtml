@@ -2,7 +2,7 @@
 @model LoginViewModel
 
 
-@using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal container", role = "form" }))
+@using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @id = "form", @class = "form-horizontal container", role = "form" }))
 {
     @Html.AntiForgeryToken()
     <h4>Log in.</h4>
@@ -24,18 +24,30 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Log in" class="btn btn-orange" />
+            <button id="submit" class="btn btn-orange" type="submit" onclick="disableSubmitButton()">
+                <span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                <span id="spinner-label">Log in</span>
+            </button>
         </div>
     </div>
     <div class="col">
         Don't have an account? @Html.ActionLink("Register now", "Register", null, htmlAttributes: new { @class = "text-orange" })
     </div>
-    @* Enable this once you have account confirmation enabled for password reset functionality
-        <p>
-            @Html.ActionLink("Forgot your password?", "ForgotPassword")
-        </p>*@
+    <div class="col">
+        @Html.ActionLink("Forgot your password?", "ForgotPassword", null, htmlAttributes: new { @class = "text-orange" })
+    </div>
+    @Html.HiddenFor(m => m.RecaptchaToken)
 }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/Custom/spinner.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcrG6oUAAAAAP-Oj2QT2QUjeabjQwy2llKsjepr"></script>
+    <script>
+        grecaptcha.ready(function () {
+            grecaptcha.execute('6LcrG6oUAAAAAP-Oj2QT2QUjeabjQwy2llKsjepr', { action: 'login' }).then(function (token) {
+                $("#RecaptchaToken").val(token);
+            });
+        });
+    </script>
 }

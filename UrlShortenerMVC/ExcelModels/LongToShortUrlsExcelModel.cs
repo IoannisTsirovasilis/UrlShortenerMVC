@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using Elmah;
+using Hangfire;
 using OfficeOpenXml;
 using System;
 using System.Data;
@@ -30,70 +31,80 @@ namespace UrlShortenerMVC.ExcelModels
                     string filePath = Path.Combine(httpContext.Server.MapPath("~/App_Data"),
                     Path.GetFileName(file.FileName));
                     file.SaveAs(filePath);
-                    DataSet ds = new DataSet();
+                    var ds = new DataSet();
 
                     //A 32-bit provider which enables the use of
 
-                    string ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + @";Extended Properties=""Excel 12.0 Xml;HDR=Yes;IMEX=1;""";
+                    var ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + @";Extended Properties=""Excel 12.0 Xml;HDR=Yes;IMEX=1;""";
                     var package = new ExcelPackage();
 
-                    using (OleDbConnection conn = new OleDbConnection(ConnectionString))
+                    using (var conn = new OleDbConnection(ConnectionString))
                     {
                         conn.Open();
-                        using (DataTable dtExcelSchema = conn.GetSchema("Tables"))
+                        using (var dtExcelSchema = conn.GetSchema("Tables"))
                         {
-                            string sheetName = dtExcelSchema.Rows[0]["TABLE_NAME"].ToString();
-                            string query = "SELECT * FROM [" + sheetName + "]";
-                            using (OleDbCommand command = new OleDbCommand(query, conn))
-                            using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))
+                            var sheetName = dtExcelSchema.Rows[0]["TABLE_NAME"].ToString();
+                            var query = "SELECT * FROM [" + sheetName + "]";
+                            using (var command = new OleDbCommand(query, conn))
+                            using (var adapter = new OleDbDataAdapter(command))
                             { adapter.Fill(ds); }
                             if (ds.Tables.Count > 0)
                             {
                                 if (ds.Tables[0].Rows.Count > 0)
                                 {
+                                    var user = db.AspNetUsers.Find(userId);
+
+                                    if (user == null)
+                                    {
+                                        File.Delete(filePath);
+                                        throw new Exception();
+                                    }
+
+                                    var campaign = db.Campaigns.Find(campaignId);
+
+                                    if (campaign != null && campaign.CreatedBy != user.Id)
+                                    {
+                                        File.Delete(filePath);
+                                        throw new Exception();
+                                    }
+
+                                    campaignId = campaign == null ? null : campaignId;
+
                                     var worksheet = package.Workbook.Worksheets.Add("New Sheet");
                                     worksheet.Cells[1, 1].Value = "Long";
                                     worksheet.Cells[1, 2].Value = "Short";
                                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                                     {
-                                        var token = UrlViewModel.GenerateLongToShortToken(db);
-                                        var shortUrl = UrlViewModel.GenerateShortUrl(token);
-                                        var isValidUrl = Uri.IsWellFormedUriString(ds.Tables[0].Rows[i][0].ToString(), UriKind.Absolute);
-                                        if (!isValidUrl)
-                                        {
-                                            worksheet.Cells[i + 2, 1].Value = ds.Tables[0].Rows[i][0].ToString();
-                                            worksheet.Cells[i + 2, 2].Value = "Invalid Url";
-                                            continue;
-                                        }
-                                        var tmp = ds.Tables[0].Rows[i][0].ToString();
-                                        var user = db.AspNetUsers.Find(userId);
+                                        var longUrl = ds.Tables[0].Rows[i][0].ToString();
+                                        var url = db.Urls.FirstOrDefault(x => x.LongUrl == longUrl && x.UserId == user.Id && x.CampaignId == campaignId);
 
-                                        if (user == null)
-                                        {
-                                            File.Delete(filePath);
-                                            throw new Exception();
-                                        }
-                                        campaignId = string.IsNullOrWhiteSpace(campaignId) ? "" : campaignId;
-                                        var campaign = db.Campaigns.Find(campaignId);
-                                        if (campaign != null && campaign.CreatedBy != user.Id)
-                                        {
-                                            File.Delete(filePath);
-                                            throw new Exception();
-                                        }
-                                        var url = db.Urls.FirstOrDefault(x => x.LongUrl == tmp && x.UserId == user.Id && x.CampaignId == campaignId);
                                         if (url != null)
                                         {
                                             worksheet.Cells[i + 2, 1].Value = url.LongUrl;
                                             worksheet.Cells[i + 2, 2].Value = url.ShortUrl;
                                             continue;
-                                        }
+                                        }                                                                                                                                                        
+                                        
                                         if (UrlViewModel.HasReachedShorteningLimit(user.Id, null, db))
                                         {
                                             File.Delete(filePath);
                                             throw new Exception(WebConfigurationManager.AppSettings["MonthlyLimitReachedTitle"]);
                                         }
-                                        worksheet.Cells[i + 2, 1].Value = ds.Tables[0].Rows[i][0].ToString();
+
+                                        var isValidUrl = Uri.IsWellFormedUriString(longUrl, UriKind.Absolute);
+                                        if (!isValidUrl)
+                                        {
+                                            worksheet.Cells[i + 2, 1].Value = longUrl;
+                                            worksheet.Cells[i + 2, 2].Value = "Invalid Url";
+                                            continue;
+                                        }
+
+                                        var token = UrlViewModel.GenerateLongToShortToken(db);
+                                        var shortUrl = UrlViewModel.GenerateShortUrl(token);
+
+                                        worksheet.Cells[i + 2, 1].Value = longUrl;
                                         worksheet.Cells[i + 2, 2].Value = shortUrl;
+
                                         var newUrl = new UrlViewModel();
                                         do
                                         {
@@ -101,7 +112,7 @@ namespace UrlShortenerMVC.ExcelModels
                                         } while (db.Urls.Find(newUrl.Id) != null);
                                         newUrl.Token = token;
                                         newUrl.ShortUrl = shortUrl;
-                                        newUrl.LongUrl = ds.Tables[0].Rows[i][0].ToString();
+                                        newUrl.LongUrl = longUrl;
                                         newUrl.UserId = userId;
                                         newUrl.Clicks = 0;
                                         newUrl.MaxClicks = shortExcelViewModel.MaxClicks;
@@ -131,11 +142,12 @@ namespace UrlShortenerMVC.ExcelModels
                     model.Succeeded = true;
                     model.ExcelFileStream = new MemoryStream(package.GetAsByteArray());
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
+                    ErrorSignal.FromCurrentContext().Raise(ex);
                     dbContextTransaction.Rollback();
                     model.Succeeded = false;
-                    model.Message = e.Message;
+                    model.Message = ex.Message;
                 }
             }
             return model;

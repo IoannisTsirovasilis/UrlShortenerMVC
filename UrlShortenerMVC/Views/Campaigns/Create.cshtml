@@ -2,11 +2,12 @@
 
 <h2>Create Campaign</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Create", "Campaigns", FormMethod.Post, new { @id = "form" }))
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
+        @Html.ValidationMessage("CampaignExists", new { @class = "text-danger" })
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -34,7 +35,10 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-orange" />
+                <button id="submit" class="btn btn-orange" type="submit" onclick="disableSubmitButton()">
+                    <span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
+                    <span id="spinner-label">Create</span>
+                </button>
             </div>
         </div>
     </div>
@@ -44,6 +48,7 @@
 </div>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryval")    
     @Scripts.Render("~/bundles/bootstrap-datepicker")
+    <script src="~/Scripts/Custom/spinner.js"></script>
 }
