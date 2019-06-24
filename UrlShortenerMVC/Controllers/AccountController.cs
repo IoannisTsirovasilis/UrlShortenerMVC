@@ -163,6 +163,10 @@ namespace UrlShortenerMVC.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Urls");
+            }
             return View();
         }
 
