@@ -190,6 +190,7 @@ namespace UrlShortenerMVC.Controllers
                     if (await UserManager.FindByEmailAsync(model.Email) != null)
                     {
                         ModelState.AddModelError("Email", "Email is in use.");
+                        return View(model);
                     }
 
                     var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
