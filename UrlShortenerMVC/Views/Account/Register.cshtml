@@ -26,6 +26,14 @@
             @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
         </div>
     </div>
+    <div class="form-group col">
+        @Html.EditorFor(m => m.TermsAndConditions)
+        I have read and accepted Short Them Up's
+        @Html.ActionLink("Terms & Conditions", "TermsAndConditions", "Home", null, htmlAttributes: new { @class = "text-orange" })
+        and
+        @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home", null, htmlAttributes: new { @class = "text-orange" }). <br/>
+        @Html.ValidationMessage("TermsAndConditions", new { @class = "text-danger" })
+    </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <button id="submit" class="btn btn-orange" type="submit" onclick="disableSubmitButton()">

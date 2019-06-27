@@ -31,7 +31,7 @@ namespace UrlShortenerMVC.ViewModels
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
 
-        public string RecaptchaToken { get; set; }
+        public string RecaptchaToken { get; set; }       
     }
 
     public class RegisterViewModel
@@ -53,6 +53,8 @@ namespace UrlShortenerMVC.ViewModels
         public string ConfirmPassword { get; set; }
         
         public string RecaptchaToken { get; set; }
+
+        public bool TermsAndConditions { get; set; }
     }
 
     public class ResetPasswordViewModel
