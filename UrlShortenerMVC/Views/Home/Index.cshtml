@@ -14,7 +14,7 @@
             <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
                 @using (Html.BeginForm("Index", "Home", FormMethod.Post))
                 {
-                    @Html.AntiForgeryToken()
+                    @Html.AntiForgeryToken()                    
                     <div class="form-row">
                         <div class="col-12 col-md-9 mb-2 mb-md-0">
                             @Html.TextBoxFor(m => m.LongUrl, new { @class = "form-control form-control-lg", placeholder = "Shorten your link" })

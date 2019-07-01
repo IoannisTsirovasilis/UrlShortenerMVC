@@ -7,7 +7,7 @@
 header.masthead {
   position: relative;
   background-color: #343a40;
-  background: url("../Images/bg-masthead.jpg") no-repeat center center;
+  background: url("/Content/images/bg-masthead.jpg") no-repeat center center;
   background-size: cover;
   padding-top: 8rem;
   padding-bottom: 8rem;
