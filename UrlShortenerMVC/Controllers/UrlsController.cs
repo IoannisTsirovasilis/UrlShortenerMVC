@@ -98,7 +98,6 @@ namespace UrlShortenerMVC.Controllers
         }
 
         // GET: Urls/Create
-        [AllowAnonymous]
         public ActionResult Create(string campaignId, string title, string message)
         {            
             var model = new UrlViewModel { CampaignId = campaignId };
@@ -112,7 +111,6 @@ namespace UrlShortenerMVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
         public ActionResult Create(UrlViewModel model)
         {
             if (ModelState.IsValid)

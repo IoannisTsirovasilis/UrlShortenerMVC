@@ -1,26 +1,46 @@
-﻿@model UrlShortenerMVC.ViewModels.IndexViewModel
+﻿@model UrlShortenerMVC.ViewModels.UrlViewModel
 
-@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    <h4>Shorten a URL</h4>
-    <hr />
-    @Html.ValidationSummary("", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(m => m.LongUrl, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.LongUrl, new { @class = "form-control" })
+@{
+    Layout = "~/Views/Shared/_HomePageLayout.cshtml";
+}
+
+<header class="masthead text-white text-center">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 mx-auto">
+                <h1 class="mb-5 font-weight-bold">Short Them Up! The link shortener you always wanted. Shorten your first link ever!</h1>
+            </div>
+            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-row">
+                        <div class="col-12 col-md-9 mb-2 mb-md-0">
+                            @Html.TextBoxFor(m => m.LongUrl, new { @class = "form-control form-control-lg", placeholder = "Shorten your link" })
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <button type="submit" class="btn btn-block btn-lg btn-orange">Shorten</button>
+                        </div>
+                        <div class="col-12 text-left">
+                            @Html.ValidationMessageFor(model => model.LongUrl, "", new { @class = "text-white" })
+                            @if (!string.IsNullOrWhiteSpace(Model.ShortUrl))
+                            {
+                                <a href="@Html.DisplayFor(model => model.ShortUrl)">@Html.DisplayFor(model => model.ShortUrl, new { htmlAttributes = new { @class = "form-control" } })</a>
+                                <img class="clipboard p-1" src="~/Content/Images/copy-icon.png" alt="copy" width="30" height="30" data-clipboard-text="@Model.ShortUrl"
+                                     data-toggle="tooltip" data-placement="top" title="Copy" />
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.ShortUrl, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10 ">
-            @Html.DisplayFor(m => m.ShortUrl)
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-primary" value="Register" />
-        </div>
-    </div>
+</header>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/Custom/spinner.js"></script>
+    @Scripts.Render("~/bundles/clipboard")
+    @Scripts.Render("~/bundles/tooltip-init")
 }

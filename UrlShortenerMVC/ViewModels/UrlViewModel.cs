@@ -8,7 +8,6 @@ namespace UrlShortenerMVC.ViewModels
 {
     public class UrlViewModel
     {
-        private readonly Entities db = new Entities();
         private static readonly string base62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         public string Id { get; set; }
@@ -33,6 +32,7 @@ namespace UrlShortenerMVC.ViewModels
         [Range(0, 10000, ErrorMessage = "The field {0} must be between {1} and {2}.")]
         [Display(Name = "Max Clicks")]
         public int MaxClicks { get; set; }
+
         public bool Expires { get; set; }
 
         [Display(Name = "Expiration Date")]

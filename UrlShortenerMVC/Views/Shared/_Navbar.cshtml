@@ -1,12 +1,17 @@
 ﻿<nav class="navbar navbar-light navbar-expand-lg bg-orange">
     <div class="container">
-        @Html.ActionLink("Short Them Up", "Create", "Urls", routeValues: null, htmlAttributes: new { @class = "navbar-brand" })
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        @Html.ActionLink("Short Them Up", "Index", "Home", routeValues: null, htmlAttributes: new { @class = "navbar-brand" })
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav mr-auto"></ul>
-            @{ Html.RenderPartial("_LoginPartial"); }
+         <div class="collapse navbar-collapse" id="navbarNav">
+        @if (!Request.IsAuthenticated)
+        {
+            <ul class="navbar-nav ml-auto d-flex justify-content-end">
+                <li class="nav-item active">@Html.ActionLink("Register", "Register", "Account", null, new { @class = "nav-link" })</li>
+                <li class="nav-item active">@Html.ActionLink("Log in", "Login", "Account", null, new { @class = "nav-link " })</li>
+            </ul>            
+        }
         </div>
     </div>
 </nav>

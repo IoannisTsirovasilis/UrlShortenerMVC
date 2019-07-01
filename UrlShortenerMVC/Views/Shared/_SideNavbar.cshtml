@@ -20,6 +20,8 @@
                 @Html.ActionLink("Links", "Index", "Urls", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
                 @Html.ActionLink("Short Excel", "ShortExcel", "Urls", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
                 @Html.ActionLink("Settings", "Index", "Manage", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
+                @Html.ActionLink("Terms & Conditions", "TermsAndConditions", "Home", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
+                @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home", null, new { @class = "btn btn-dark text-left border-bottom pl-4 pr-5" })
                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "w-100" }))
                 {
                     @Html.AntiForgeryToken()

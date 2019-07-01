@@ -290,9 +290,16 @@
     <Content Include="Content\bootstrap-datepicker3.standalone.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Custom\landing-page.css" />
+    <Content Include="Content\Custom\landing-page.min.css" />
+    <Content Include="Content\Custom\simple-line-icons.css" />
     <Content Include="Content\Custom\styles.css" />
+    <Content Include="Content\Images\bg-masthead.jpg" />
+    <Content Include="Content\Images\chart-icon.png" />
     <Content Include="Content\Images\copy-icon.png" />
+    <Content Include="Content\Images\excel-file-icon.png" />
     <Content Include="Content\Images\info-icon.png" />
+    <Content Include="Content\Images\no-charge-icon.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -376,8 +383,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_BasicLayout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
@@ -419,6 +424,8 @@
     <Content Include="Views\Account\ConfirmEmailNotification.cshtml" />
     <Content Include="Views\Account\ResendConfirmEmail.cshtml" />
     <Content Include="Views\Home\UnderConstruction.cshtml" />
+    <Content Include="Views\Shared\_HomePageLayout.cshtml" />
+    <Content Include="Views\Shared\_IconsGrid.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ElmahLog\" />

@@ -12,7 +12,7 @@ namespace UrlShortenerMVC
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}",
-                defaults: new { controller = "Urls", action = "Create" }
+                defaults: new { controller = "Home", action = "Index" }
             );
         }
     }

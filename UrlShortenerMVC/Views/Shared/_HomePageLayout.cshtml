@@ -5,27 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShortThemUp</title>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/homepagelayout")
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
-<body class="p-0 bg-light">
-    <div class="container-fluid body-content d-flex p-0 ">
-        @if (User.Identity.IsAuthenticated)
-        {
-            Html.RenderAction("SideNavbar", "Home");
-        }
-        <div class="col p-0 d-flex flex-column">
-            @if (!User.Identity.IsAuthenticated)
-            {
-                Html.RenderPartial("_Navbar");
-            }
-            <div class="mt-5 mx-5 mb-5">
-                @RenderBody()
-            </div>
-        </div>
+<body>
+    @{Html.RenderPartial("_Navbar");}
 
-    </div>
+    @RenderBody()
+
+    @{Html.RenderPartial("_IconsGrid");}
+
+    @{Html.RenderPartial("_Footer");}
 
     @* toast for errors *@
     @if (!string.IsNullOrWhiteSpace(ViewBag.Message))
@@ -42,9 +33,9 @@
             </div>
         </div>
     }
+
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/toast-init")
     @RenderSection("scripts", required: false)
 </body>
 </html>

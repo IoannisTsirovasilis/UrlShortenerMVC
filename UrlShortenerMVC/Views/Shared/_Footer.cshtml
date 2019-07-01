@@ -1,8 +1,22 @@
-﻿<footer class="fixed-bottom navbar navbar-light navbar-expand mt-5 bg-orange">
-    <div class="container justify-content-end">
-        Support: admin@shortthemup.com
-        @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home", null, new { @class = "nav-link nav-item" })
-        @Html.ActionLink("Terms & Conditions", "TermsAndConditions", "Home", null, new { @class = "nav-link nav-item" })
-        <span>&copy; @DateTime.Now.Year - Short Them Up</span>
+﻿<footer class="footer bg-orange">
+    <div class="container">
+        <div class="row">
+            <div class="col h-100 text-center text-lg-left my-auto">
+                <ul class="list-inline mb-2">
+                    <li class="list-inline-item">
+                        Contact: admin@shortthemup.com
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                        @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home", null, null)
+                    </li>
+                    <li class="list-inline-item">&sdot;</li>
+                    <li class="list-inline-item">
+                        @Html.ActionLink("Terms & Conditions", "TermsAndConditions", "Home", null, null)
+                    </li>
+                </ul>
+                <p class="text-muted small mb-4 mb-lg-0">&copy; Short Them Up @DateTime.Now.Year. All Rights Reserved.</p>
+            </div>
+        </div>
     </div>
 </footer>

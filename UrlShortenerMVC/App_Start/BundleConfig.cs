@@ -50,6 +50,11 @@ namespace UrlShortenerMVC
                       "~/Content/Custom/styles.css",
                       "~/Content/bootstrap-datepicker3.standalone.css",
                       "~/Content/PagedList.css"));
+
+            bundles.Add(new StyleBundle("~/Content/homepagelayout").Include(
+                      "~/Content/bootstrap.css",
+                      "~/Content/Custom/styles.css",
+                      "~/Content/Custom/landing-page.css"));
         }
     }
 }
