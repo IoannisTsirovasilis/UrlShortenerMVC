@@ -426,9 +426,7 @@
     <Content Include="Views\Shared\_HomePageLayout.cshtml" />
     <Content Include="Views\Shared\_IconsGrid.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ElmahLog\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
