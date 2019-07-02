@@ -11,7 +11,7 @@
         @Html.ValidationMessage("CampaignExists", new { @class = "text-danger" })
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-6 col-xl-3">
                 @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
@@ -19,7 +19,7 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.StartDateString, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-6 col-xl-3">
                 @Html.EditorFor(model => model.StartDateString, new { htmlAttributes = new { @class = "form-control datepicker" } })
                 @Html.ValidationMessageFor(model => model.StartDateString, "", new { @class = "text-danger" })
             </div>
@@ -27,7 +27,7 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.EndDateString, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-6 col-xl-3">
                 @Html.EditorFor(model => model.EndDateString, new { htmlAttributes = new { @class = "form-control datepicker" } })
                 @Html.ValidationMessageFor(model => model.EndDateString, "", new { @class = "text-danger" })
                 @Html.ValidationMessage("StartDateGreaterThanEndDate", "", new { @class = "text-danger" })

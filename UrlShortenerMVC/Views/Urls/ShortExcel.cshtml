@@ -6,15 +6,15 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.CampaignId)
 
-    <div class="input-group">
-        <div class="custom-file">
+    <div class="form-row">
+        <div class="col-12 col-md-9 mb-2 mb-md-0 custom-file">
             @Html.EditorFor(model => model.File, new { htmlAttributes = new { @class = "custom-file-input", type = "file", aria_describedby = "submit", onchange = "changeFilePlaceholder()" } })
             <label id="BrowseFileButton" class="custom-file-label" for="File">Choose file</label>
         </div>
-        <div class="input-group-append">
-            <button id="submit" class="btn btn-orange rounded-right" type="submit" onclick="disableSubmitButton()">
+        <div class="col-12 col-md-3">
+            <button id="submit" class="btn btn-block btn-orange" type="submit" onclick="disableSubmitButton()">
                 <span id="spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden></span>
-                <span id="spinner-label">SHORTEN</span>
+                <span id="spinner-label">Shorten</span>
             </button>
         </div>
     </div>
@@ -29,26 +29,26 @@
 
     <div class="collapse" id="options">
         <div class="form-group">
-            @Html.LabelFor(model => model.MaxClicks, htmlAttributes: new { @class = "control-label mr-1" })
+            @Html.LabelFor(model => model.MaxClicks, htmlAttributes: new { @class = "mr-1" })
             <span data-toggle="tooltip" title="0 stands for infinite clicks">
                 <img src="~/Content/Images/info-icon.png" alt="&#128712;" width="15" height="15" />
             </span>
 
-            <div class="col-md-10">
+            <div class="col-md-6 col-xl-3">
                 @Html.EditorFor(model => model.MaxClicks, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.MaxClicks, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group col">
-            @Html.LabelFor(model => model.Expires, htmlAttributes: new { @class = "control-label" })
+            @Html.LabelFor(model => model.Expires)
             @Html.EditorFor(model => model.Expires, new { htmlAttributes = new { onclick = "toggleExpiresAtField()" } })
             @Html.ValidationMessageFor(model => model.Expires, "", new { @class = "text-danger" })
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ExpiresAtString, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            @Html.LabelFor(model => model.ExpiresAtString, htmlAttributes: new { @class = "col-md-2" })
+            <div class="col-md-6 col-xl-3">
                 @Html.EditorFor(model => model.ExpiresAtString, new { htmlAttributes = new { @class = "form-control datepicker" } })
                 @Html.ValidationMessageFor(model => model.ExpiresAtString, "", new { @class = "text-danger" })
                 @Html.ValidationMessage("SpecifyExpirationDate", new { @class = "text-danger" })
@@ -57,7 +57,7 @@
         </div>
     </div>
     <div class="mt-2">
-        Fill the "A" column of the first sheet of an excel file with your desired links. "A1" should contain a column title and not a link. 
+        Fill the "A" column of the first sheet of an excel file with your desired links. "A1" should contain a column title and not a link.
         Only links from "A2" and below will be shortened. Links should be in one of the following forms:
         <ul>
             <li>http://www.example.com</li>

@@ -1,38 +1,41 @@
 ﻿@model UrlShortenerMVC.ViewModels.RegisterViewModel
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @id = "form", @class = "form-horizontal container", role = "form" }))
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @id = "form", @class = "form-horizontal offset-md-2", role = "form" }))
 {
     @Html.AntiForgeryToken()
     <h4>Create your free account.</h4>
     <hr />
     <div class="form-group">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+        @Html.LabelFor(m => m.Email, new { @class = "col" })
+        <div class="col-md-6 col-xl-3">
             @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+        @Html.LabelFor(m => m.Password, new { @class = "col" })
+        <div class="col-md-6 col-xl-3">
             @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col" })
+        <div class="col-md-6 col-xl-3">
             @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
         </div>
     </div>
     <div class="form-group col">
         @Html.EditorFor(m => m.TermsAndConditions)
-        I have read and accepted Short Them Up's
-        @Html.ActionLink("Terms & Conditions", "TermsAndConditions", "Home", null, htmlAttributes: new { @class = "text-orange" })
-        and
-        @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home", null, htmlAttributes: new { @class = "text-orange" }). <br/>
+        <label for="TermsAndConditions">
+            I have read and accepted Short Them Up's
+            @Html.ActionLink("Terms & Conditions", "TermsAndConditions", "Home", null, htmlAttributes: new { @class = "text-orange" })
+            and
+            @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home", null, htmlAttributes: new { @class = "text-orange" }).
+        </label>
+        <br />
         @Html.ValidationMessage("TermsAndConditions", new { @class = "text-danger" })
     </div>
     <div class="form-group">

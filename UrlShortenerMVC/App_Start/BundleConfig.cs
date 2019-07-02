@@ -46,7 +46,6 @@ namespace UrlShortenerMVC
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/Site.css",
                       "~/Content/Custom/styles.css",
                       "~/Content/bootstrap-datepicker3.standalone.css",
                       "~/Content/PagedList.css"));
