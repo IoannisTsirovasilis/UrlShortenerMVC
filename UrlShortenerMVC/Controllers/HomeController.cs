@@ -86,7 +86,7 @@ namespace UrlShortenerMVC.Controllers
                             model.Id = Guid.NewGuid().ToString();
                         } while (db.Urls.Find(model.Id) != null);
 
-                        var url = db.Urls.FirstOrDefault(x => x.LongUrl == model.LongUrl && x.IPAddress == Request.UserHostAddress);
+                        var url = db.Urls.FirstOrDefault(x => x.LongUrl == model.LongUrl && x.UserId == null);
                         if (url != null)
                         {
                             return View(new UrlViewModel { LongUrl = url.LongUrl, ShortUrl = url.ShortUrl });
