@@ -5,7 +5,6 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
-using UrlShortenerMVC.Jobs;
 using UrlShortenerMVC.Models;
 
 namespace UrlShortenerMVC
@@ -35,7 +34,7 @@ namespace UrlShortenerMVC
                         validateInterval: TimeSpan.FromMinutes(30),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 },
-                CookieName = "shortmeplz"
+                CookieName = "shortthemup"
             });
 
             // Hangfire initialization

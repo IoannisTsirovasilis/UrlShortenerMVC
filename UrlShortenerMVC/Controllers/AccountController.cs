@@ -108,14 +108,12 @@ namespace UrlShortenerMVC.Controllers
         {
             try
             {
-
                 if (!ModelState.IsValid)
                 {
                     return View(model);
                 }
 
-                var response = ValidateCaptcha(model.RecaptchaToken);
-                if (!response.Success) // || response.Score < 0.5)
+                if (!ValidateCaptcha(model.RecaptchaToken).Success) // || response.Score < 0.5)
                 {
                     throw new Exception("Recaptcha Validation Failed.");
                 }
@@ -186,8 +184,8 @@ namespace UrlShortenerMVC.Controllers
                         ModelState.AddModelError("TermsAndConditions", "You must read and accept Terms & Conditions and Privacy Policy.");
                         return View(model);
                     }
-                    var response = ValidateCaptcha(model.RecaptchaToken);
-                    if (!response.Success) // || response.Score < 0.5)
+
+                    if (!ValidateCaptcha(model.RecaptchaToken).Success) // || response.Score < 0.5)
                     {
                         throw new Exception("Recaptcha Validation Failed.");
                     }
