@@ -15,7 +15,7 @@ namespace UrlShortenerMVC.Controllers
     [Authorize]
     public class CampaignsController : Controller
     {
-        private readonly Entities db = new Entities();
+        private Entities db = new Entities();
 
         // GET: Campaigns
         public ActionResult Index(string title, string message)
