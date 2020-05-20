@@ -3,3 +3,6 @@ UrlShortenerMVC/bin/
 UrlShortenerMVC/obj/
 UrlShortenerMVC/Properties/
 UrlShortenerMVC/UrlShortenerMVC.csproj.user
+UrlShortenerNETCore/UrlShortenerNETCore.csproj.user
+UrlShortenerNETCore/bin/
+UrlShortenerNETCore/obj/
